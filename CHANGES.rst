@@ -12,6 +12,13 @@ outlier_detection
   input ``ImageModels`` that are saved to disk instead of keeping them in memory.
   New parameters were aded to outlier_detection_step to control this functionality. [#6904]
 
+skymatch
+--------
+
+- Fixed a bug in ``skymatch`` due to which computed background values were
+  not subtracted from image data when ``subtract=True``. [#6934]
+
+
 1.6.2 (2022-07-19)
 ==================
 
@@ -34,7 +41,7 @@ residual_fringe
 skymatch
 --------
 
-- Fixed a bug in `skymatch` due to which subtracted values were not saved
+- Fixed a bug in ``skymatch`` due to which subtracted values were not saved
   in the inputs when input was an association table. [#6922]
 
 source_catalog
