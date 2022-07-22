@@ -12,6 +12,13 @@ outlier_detection
   input ``ImageModels`` that are saved to disk instead of keeping them in memory.
   New parameters were aded to outlier_detection_step to control this functionality. [#6904]
 
+assign_wcs
+----------
+
+- Added convenience function ``update_fits_wcsinfo()`` to ``assign_wcs.util``
+  module to allow easy updating of FITS WCS stored in ``datamodel.meta.wcsinfo``
+  from data model's GWCS. [#6935]
+
 skymatch
 --------
 
