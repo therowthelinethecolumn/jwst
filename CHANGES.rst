@@ -32,6 +32,15 @@ ramp_fitting
   removing NaNs from the rateints product and setting appropriate DQ
   flags. [#6949]
 
+- Add P_SUBARR keyword to the `DarkModel` schema. [#6951]
+
+resample
+--------
+
+- Fixed a bug in how variance arrays were resampled due to which the resulting
+  resampled error map contained an excessive number of zero-valued
+  pixel. [#6954]
+
 skymatch
 --------
 
