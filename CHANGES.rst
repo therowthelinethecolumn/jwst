@@ -35,6 +35,8 @@ tweakreg
   alignment (whcih needs 2 images) instead of cancelling  the entire
   step. [#6938]
 
+- The ``tweakreg`` step now masks ``NON_SCIENCE`` pixels when
+  calculating the source detection theshold. [#6940]
 
 1.6.2 (2022-07-19)
 ==================
