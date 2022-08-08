@@ -18,6 +18,12 @@ outlier_detection
   input ``ImageModels`` that are saved to disk instead of keeping them in memory.
   New parameters were aded to outlier_detection_step to control this functionality. [#6904]
 
+ami_analyze
+-----------
+
+- Revert Fourier Transform code to avoid using Poppy which was recently updated
+  to use a different sign convention.[#6967]  
+  
 assign_wcs
 ----------
 
