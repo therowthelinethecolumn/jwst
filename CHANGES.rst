@@ -1,3 +1,17 @@
+1.7.0 (2022-08-31)
+==================
+
+extract_1d
+----------
+
+- Update int_times keywords in SOSS spectral output [#6930]
+
+outlier_detection
+-----------------
+- Improved memory usage during `outlier_detection` by adding ability to work with
+  input ``ImageModels`` that are saved to disk instead of keeping them in memory.
+  New parameters were aded to outlier_detection_step to control this functionality. [#6904]
+
 1.6.2 (2022-07-19)
 ==================
 
@@ -82,14 +96,6 @@ pipeline
 
 - Only apply source_id fix from #6915 to models with multiple
   sources [#6917]
-
-
-outlier_detection
------------------
-- Improved memory usage during `outlier_detection` by adding ability to work with
-  input ``ImageModels`` that are saved to disk instead of keeping them in memory.
-  New parameters were aded to outlier_detection_step to control this functionality. [#6904]
-
 
 ramp_fitting
 ------------
