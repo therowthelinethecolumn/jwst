@@ -22,8 +22,8 @@ ami_analyze
 -----------
 
 - Revert Fourier Transform code to avoid using Poppy which was recently updated
-  to use a different sign convention.[#6967]  
-  
+  to use a different sign convention.[#6967]
+
 assign_wcs
 ----------
 
@@ -80,8 +80,9 @@ tweakreg
   alignment (which needs 2 images) instead of skipping the entire
   step. [#6938]
 
-- The ``tweakreg`` step now masks ``NON_SCIENCE`` pixels when
-  calculating the source detection theshold. [#6940]
+- The ``tweakreg`` step now masks `both` ``NON_SCIENCE`` and ``DO_NOT_USE``
+  pixels when calculating the source detection theshold and finding
+  sources. [#6940, #6974]
 
 - Added support for user-supplied reference catalog for stage 2 of alignment
   in the ``tweakreg`` step. This catalog, if provided, will be used instead
