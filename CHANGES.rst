@@ -6,6 +6,11 @@ extract_1d
 
 - Update int_times keywords in SOSS spectral output [#6930]
 
+general
+-------
+
+- pin `jsonschema` below `4.10.0` to fix issues with unit and regression tests [#6986]
+
 jump
 ----
 
