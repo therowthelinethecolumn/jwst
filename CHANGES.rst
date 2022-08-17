@@ -6,6 +6,12 @@ extract_1d
 
 - Update int_times keywords in SOSS spectral output [#6930]
 
+jump
+----
+
+- Added flagging after detected ramp jumps based on two DN thresholds and
+  two number of groups to flag [#6943]
+
 outlier_detection
 -----------------
 - Improved memory usage during `outlier_detection` by adding ability to work with
@@ -28,11 +34,15 @@ skymatch
 tweakreg
 --------
 
-- ``tweakreg`` step now updates FITS WCS stored in ``datamodel.meta.wcsinfo``
-  from data model's tweaked GWCS. [#6936, #6947, #6955]
+- The ``tweakreg`` step now updates FITS WCS stored in ``datamodel.meta.wcsinfo``
+  from ``datamodel``'s tweaked GWCS. [#6936, #6947, #6955]
+
+- The ``tweakreg`` step now masks both ``NON_SCIENCE`` and ``DO_NOT_USE``
+  pixels when calculating the source detection theshold and finding
+  sources. [#6940, #6974]
 
 - Allow alignment of a single image (or group) to Gaia while skipping relative
-  alignment (whcih needs 2 images) instead of cancelling  the entire
+  alignment (which needs 2 images) instead of skipping the entire
   step. [#6938]
 
 - The ``tweakreg`` step now masks ``NON_SCIENCE`` pixels when
