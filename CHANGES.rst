@@ -25,6 +25,13 @@ assign_wcs
   module to allow easy updating of FITS WCS stored in ``datamodel.meta.wcsinfo``
   from data model's GWCS. [#6935]
 
+ramp_fitting
+------------
+
+- Updating tests due to new behavior in STCAL (spacetelescope/stcal#112)
+  removing NaNs from the rateints product and setting appropriate DQ
+  flags. [#6949]
+
 skymatch
 --------
 
