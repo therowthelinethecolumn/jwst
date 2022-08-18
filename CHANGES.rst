@@ -9,7 +9,7 @@ extract_1d
 general
 -------
 
-- pin `jsonschema` below `4.10.0` to fix issues with unit and regression tests [#6986]
+- pin ``asdf`` above ``2.12.1`` to fix issues encountered within ASDF due to ``jsonschema`` release ``4.10.0`` [#6986, #6991]
 
 jump
 ----
