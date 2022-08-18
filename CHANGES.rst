@@ -63,6 +63,9 @@ master_background
 - Fix MRS sigma-clipped background use in cases where EXTENDED keyword not
   properly set. [#6960]
 
+- Updated documentation of memory model and new parameters for memory use in
+  outlier_detection and resample steps. [#6983]
+
 - Fix reading of the source_type attribute for NIRSpec IFU data. [#6980]
 
 resample
