@@ -104,6 +104,12 @@ tweakreg
   of the 'GAIA' catalogs for aligning all input images together as one single
   group. [#6946]
 
+documentation
+-------------
+
+- For the `ModelContainer` method `ind_asn_type` directory information
+  is now properly handled if directory information is included as part
+  of the filename for `expname`. [#6985]
 
 1.6.2 (2022-07-19)
 ==================
