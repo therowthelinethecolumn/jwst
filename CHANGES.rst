@@ -50,8 +50,10 @@ cube_build
   the skip to determine the cube footprint. Also updated the drizzle
   code to use the  wcs of output frame to account for moving target. [#6981]
 
-- Update the wcs value for naxis3 when wavelength planes are removed from the
-  IFUCube when there is no valid data. [#6976]
+- Update the WCS ``naxis3`` value when wavelength planes are removed from the
+  IFUCube due to no valid data. [#6976]
+
+- Add a check in the process of building a cube to confirm that there is valid data on the detector. [#6998]
 
 ramp_fitting
 ------------
