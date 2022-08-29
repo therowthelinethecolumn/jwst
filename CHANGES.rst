@@ -42,7 +42,7 @@ cube_build
 - Remove trailing dash from IFU cube filenames built from all subchannels.
   Sort subchannels present by inverse alphabetical order to ensure
   consistent filename creation across processing runs. [#6959]
-  
+
 - Re-wrote c code for NIRSpec dq flagging.[#6981]
 
 - For moving target data removed using  s_region values in cal files to
@@ -108,6 +108,9 @@ tweakreg
   in the ``tweakreg`` step. This catalog, if provided, will be used instead
   of the 'GAIA' catalogs for aligning all input images together as one single
   group. [#6946]
+
+- exposed additional parameters for absolute astrometry:
+ ``abs_minobj``, ``abs_searchrad``, ``abs_use2dhist``, ``abs_separation``, ``abs_tolerance``, ``abs_fitgeometry``, ``abs_nclip``,  and ``abs_sigma``. [#6987]
 
 documentation
 -------------
