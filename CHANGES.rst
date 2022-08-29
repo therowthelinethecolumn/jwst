@@ -119,6 +119,8 @@ tweakreg
 - exposed additional parameters for absolute astrometry:
  ``abs_minobj``, ``abs_searchrad``, ``abs_use2dhist``, ``abs_separation``, ``abs_tolerance``, ``abs_fitgeometry``, ``abs_nclip``,  and ``abs_sigma``. [#6987]
 
+- Refactored code to work with changes in ``tweakwcs`` version 0.8.0. [#7006]
+
 documentation
 -------------
 
