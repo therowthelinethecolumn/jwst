@@ -57,6 +57,12 @@ cube_build
 
 - Fix a bug when user changes the spatial scale [#7002]
 
+datamodels
+----------
+
+- Add "BACKGROUND" to the list of allowed values for the ``PATTTYPE`` keyword
+  for MIRI coronagraphic mode [#7009]
+
 ramp_fitting
 ------------
 
