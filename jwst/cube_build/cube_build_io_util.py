@@ -1,7 +1,9 @@
 """ Read in reference files for the cube_build setp
 """
-from .. import datamodels
 import logging
+
+from .. import datamodels
+
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
@@ -65,7 +67,7 @@ def read_cubepars(par_filename,
                     table_wavemin = tabdata['WAVEMIN']
                     table_wavemax = tabdata['WAVEMAX']
                     # match on this_channel and this_sub
-                    if(this_channel == table_channel and this_sub == table_band):
+                    if (this_channel == table_channel and this_sub == table_band):
                         instrument_info.SetSpatialSize(table_spaxelsize, this_channel, this_sub)
                         instrument_info.SetSpectralStep(table_spectralstep, this_channel, this_sub)
                         instrument_info.SetWaveMin(table_wavemin, this_channel, this_sub)
@@ -79,8 +81,8 @@ def read_cubepars(par_filename,
                         table_wroi = tabdata['ROISPECTRAL']
                         table_power = tabdata['POWER']
                         table_softrad = tabdata['SOFTRAD']
-                    # match on this_channel and this_sub
-                        if(this_channel == table_channel and this_sub == table_band):
+                        # match on this_channel and this_sub
+                        if (this_channel == table_channel and this_sub == table_band):
                             instrument_info.SetMSM(this_channel, this_sub,
                                                    table_sroi, table_wroi,
                                                    table_power, table_softrad)
@@ -93,8 +95,8 @@ def read_cubepars(par_filename,
                         table_sroi = tabdata['ROISPATIAL']
                         table_wroi = tabdata['ROISPECTRAL']
                         table_scalerad = tabdata['SCALERAD']
-                    # match on this_channel and this_sub
-                        if(this_channel == table_channel and this_sub == table_band):
+                        # match on this_channel and this_sub
+                        if (this_channel == table_channel and this_sub == table_band):
                             instrument_info.SetEMSM(this_channel, this_sub,
                                                     table_sroi, table_wroi,
                                                     table_scalerad)
@@ -140,7 +142,7 @@ def read_cubepars(par_filename,
                     table_wavemin = tabdata['WAVEMIN']
                     table_wavemax = tabdata['WAVEMAX']
 
-                    if(this_gwa == table_grating and this_filter == table_filter):
+                    if (this_gwa == table_grating and this_filter == table_filter):
                         instrument_info.SetSpatialSize(table_spaxelsize, this_gwa, this_filter)
                         instrument_info.SetSpectralStep(table_spectralstep, this_gwa, this_filter)
                         instrument_info.SetWaveMin(table_wavemin, this_gwa, this_filter)
@@ -156,7 +158,7 @@ def read_cubepars(par_filename,
                         table_power = tabdata['POWER']
                         table_softrad = tabdata['SOFTRAD']
 
-                        if(this_gwa == table_grating and this_filter == table_filter):
+                        if (this_gwa == table_grating and this_filter == table_filter):
                             instrument_info.SetMSM(this_gwa, this_filter,
                                                    table_sroi, table_wroi,
                                                    table_power, table_softrad)
@@ -169,7 +171,7 @@ def read_cubepars(par_filename,
                         table_wroi = tabdata['ROISPECTRAL']
                         table_scalerad = tabdata['SCALERAD']
 
-                        if(this_gwa == table_grating and this_filter == table_filter):
+                        if (this_gwa == table_grating and this_filter == table_filter):
                             instrument_info.SetEMSM(this_gwa, this_filter,
                                                     table_sroi, table_wroi,
                                                     table_scalerad)

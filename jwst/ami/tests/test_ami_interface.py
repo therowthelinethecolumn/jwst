@@ -1,5 +1,4 @@
 import pytest
-
 import stpipe
 
 from jwst import datamodels
@@ -26,7 +25,8 @@ def test_ami_analyze_no_reffile_fail(monkeypatch):
     model.meta.observation.time = "00:00:00"
 
     def mockreturn(input_model, reftype, observatory=None, asn_exptypes=None):
-        return("N/A")
+        return ("N/A")
+
     monkeypatch.setattr(stpipe.crds_client, 'get_reference_file', mockreturn)
 
     with pytest.raises(RuntimeError):

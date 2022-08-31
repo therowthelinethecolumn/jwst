@@ -1,7 +1,6 @@
-from .model_base import JwstDataModel
 from .image import ImageModel
+from .model_base import JwstDataModel
 from .slit import SlitModel, SlitDataModel
-
 
 __all__ = ['MultiSlitModel']
 
@@ -96,7 +95,7 @@ class MultiSlitModel(JwstDataModel):
             try:
                 slit = self.slits[key]  # returns an ObjectNode instance
             except IndexError:
-                raise("Slit {0} doesn't exist".format(key))
+                raise ("Slit {0} doesn't exist".format(key))
             kwargs = {}
             items = dict(slit.items())
             for key in items:

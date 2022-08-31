@@ -1,18 +1,17 @@
 import math
 
-import pytest
 import numpy as np
-
+import pytest
 from astropy import units as u
 
 from jwst import datamodels
 from jwst.datamodels import SpecModel, MultiSpecModel
 from jwst.photom import photom
 
-MJSR_TO_UJA2 = (u.megajansky / u.steradian).to(u.microjansky / (u.arcsecond**2))
+MJSR_TO_UJA2 = (u.megajansky / u.steradian).to(u.microjansky / (u.arcsecond ** 2))
 
 # Multiply by this to convert from square arcseconds to steradians
-A2_TO_SR = (np.pi / (180. * 3600.))**2
+A2_TO_SR = (np.pi / (180. * 3600.)) ** 2
 
 
 def mk_data(shape):
@@ -40,9 +39,9 @@ def mk_data(shape):
     data = np.arange(1, nelem + 1, dtype=np.float32).reshape(shape)
     dq = np.zeros(shape, dtype=np.uint32)
     err = np.ones(shape, dtype=np.float32)
-    var_p = np.ones(shape, dtype=np.float32)            # var_poisson
-    var_r = np.ones(shape, dtype=np.float32)            # var_rnoise
-    var_f = np.ones(shape, dtype=np.float32)            # var_flat
+    var_p = np.ones(shape, dtype=np.float32)  # var_poisson
+    var_r = np.ones(shape, dtype=np.float32)  # var_rnoise
+    var_f = np.ones(shape, dtype=np.float32)  # var_flat
 
     return (data, dq, err, var_p, var_r, var_f)
 
@@ -172,10 +171,10 @@ def create_input(instrument, detector, exptype,
             input_model = datamodels.MultiSlitModel()
             if filter.endswith('R'):
                 shape = (69, 5)
-                dispaxis = 2                    # vertical
+                dispaxis = 2  # vertical
             else:
                 shape = (5, 69)
-                dispaxis = 1                    # horizontal
+                dispaxis = 1  # horizontal
             input_model.meta.target.source_type = 'POINT'
             (data, dq, err, var_p, var_r, var_f) = mk_data(shape)
             wl = mk_wavelength(shape, 1.0, 5.0, dispaxis)
@@ -197,7 +196,7 @@ def create_input(instrument, detector, exptype,
             ]
             speclen = [200, 200]
             input_model = mk_soss_spec(settings, speclen)
-        else:                                   # NIS_IMAGE
+        else:  # NIS_IMAGE
             shape = (96, 128)
             (data, dq, err, var_p, var_r, var_f) = mk_data(shape)
             input_model = datamodels.ImageModel(data=data, dq=dq, err=err)
@@ -269,10 +268,10 @@ def create_input(instrument, detector, exptype,
             input_model = datamodels.MultiSlitModel()
             if pupil.endswith('C'):
                 shape = (69, 5)
-                dispaxis = 2                    # vertical
+                dispaxis = 2  # vertical
             else:
                 shape = (5, 69)
-                dispaxis = 1                    # horizontal
+                dispaxis = 1  # horizontal
             (data, dq, err, var_p, var_r, var_f) = mk_data(shape)
             wl = mk_wavelength(shape, 2.4, 5.0, dispaxis)
             input_model.meta.target.source_type = 'POINT'
@@ -287,7 +286,7 @@ def create_input(instrument, detector, exptype,
                 slit.meta.photometry.pixelarea_arcsecsq = 0.0025
                 slit.meta.photometry.pixelarea_steradians = 0.0025 * A2_TO_SR
                 input_model.slits.append(slit.copy())
-        else:                                   # NRC_IMAGE
+        else:  # NRC_IMAGE
             (data, dq, err, var_p, var_r, var_f) = mk_data((128, 256))
             input_model = datamodels.ImageModel(data=data, dq=dq, err=err)
             input_model.var_poisson = var_p
@@ -325,7 +324,7 @@ def create_input(instrument, detector, exptype,
             input_model.meta.target.source_type = 'POINT'
             input_model.meta.photometry.pixelarea_arcsecsq = 0.0025
             input_model.meta.photometry.pixelarea_steradians = 0.0025 * A2_TO_SR
-        else:                                   # MIR_IMAGE
+        else:  # MIR_IMAGE
             shape = (128, 256)
             data = np.arange(128 * 256, dtype=np.float32).reshape(shape)
             dq = np.zeros(shape, dtype=np.uint32)
@@ -334,7 +333,7 @@ def create_input(instrument, detector, exptype,
             input_model.var_poisson = np.ones(shape, dtype=np.float32)
             input_model.var_rnoise = np.ones(shape, dtype=np.float32)
             input_model.var_flat = np.ones(shape, dtype=np.float32)
-            input_model.meta.subarray.name = 'SUB256'       # matches 'GENERIC'
+            input_model.meta.subarray.name = 'SUB256'  # matches 'GENERIC'
             input_model.meta.target.source_type = 'POINT'
             input_model.meta.photometry.pixelarea_arcsecsq = 0.0025
             input_model.meta.photometry.pixelarea_steradians = 0.0025 * A2_TO_SR
@@ -1066,13 +1065,13 @@ def test_nirspec_fs():
 
     ftab = create_photom_nrs_fs(min_wl=1.0, max_wl=5.0,
                                 min_r=8.0, max_r=9.0)
-    ds.calc_nirspec(ftab, 'garbage')    # area_fname isn't used for this mode
+    ds.calc_nirspec(ftab, 'garbage')  # area_fname isn't used for this mode
 
     result = []
     for (k, slit) in enumerate(save_input.slits):
         slitname = slit.name
-        input = slit.data                       # this is from save_input
-        output = ds.input.slits[k].data         # ds.input is the output
+        input = slit.data  # this is from save_input
+        output = ds.input.slits[k].data  # ds.input is the output
         rownum = find_row_in_ftab(save_input, ftab, ['filter', 'grating'],
                                   slitname, order=None)
         photmj = ftab.phot_table['photmj'][rownum]
@@ -1133,7 +1132,7 @@ def test_nirspec_bright():
 
     shape = input_model.data.shape
 
-    slitname = 'S1600A1'                        # for brightobj mode
+    slitname = 'S1600A1'  # for brightobj mode
 
     input = save_input.data
     output = ds.input.data
@@ -1200,8 +1199,8 @@ def test_nirspec_msa():
 
     result = []
     for (k, slit) in enumerate(save_input.slits):
-        input = slit.data                       # this is from save_input
-        output = ds.input.slits[k].data         # ds.input is the output
+        input = slit.data  # this is from save_input
+        output = ds.input.slits[k].data  # ds.input is the output
 
         shape = input.shape
         ix = shape[1] // 2
@@ -1239,8 +1238,8 @@ def test_niriss_wfss():
 
     result = []
     for (k, slit) in enumerate(save_input.slits):
-        input = slit.data                       # this is from save_input
-        output = ds.input.slits[k].data         # ds.input is the output
+        input = slit.data  # this is from save_input
+        output = ds.input.slits[k].data  # ds.input is the output
         sp_order = slit.meta.wcsinfo.spectral_order
         rownum = find_row_in_ftab(save_input, ftab, ['filter', 'pupil'],
                                   slitname=None, order=sp_order)
@@ -1273,8 +1272,8 @@ def test_niriss_soss():
     ds.calc_niriss(ftab)
 
     input = save_input.spec[0].spec_table['FLUX']
-    output = ds.input.spec[0].spec_table['FLUX']                      # ds.input is the output
-    sp_order = 1                                # to agree with photom.py
+    output = ds.input.spec[0].spec_table['FLUX']  # ds.input is the output
+    sp_order = 1  # to agree with photom.py
     rownum = find_row_in_ftab(save_input, ftab, ['filter', 'pupil'],
                               slitname=None, order=sp_order)
     photmj = ftab.phot_table['photmj'][rownum]
@@ -1288,7 +1287,7 @@ def test_niriss_soss():
     compare = photmj * rel_resp
     # Compare the values at the center pixel.
     ratio = output[test_ind] / input[test_ind]
-    assert(np.allclose(ratio, compare, rtol=1.e-7))
+    assert (np.allclose(ratio, compare, rtol=1.e-7))
 
 
 def test_niriss_image():
@@ -1302,7 +1301,7 @@ def test_niriss_image():
     ds.calc_niriss(ftab)
 
     input = save_input.data
-    output = ds.input.data                      # ds.input is the output
+    output = ds.input.data  # ds.input is the output
     rownum = find_row_in_ftab(save_input, ftab, ['filter', 'pupil'],
                               slitname=None)
     photmjsr = ftab.phot_table['photmjsr'][rownum]
@@ -1312,7 +1311,7 @@ def test_niriss_image():
     compare = photmjsr
     # Compare the values at the center pixel.
     ratio = output[iy, ix] / input[iy, ix]
-    assert(np.allclose(ratio, compare, rtol=1.e-7))
+    assert (np.allclose(ratio, compare, rtol=1.e-7))
 
 
 def test_miri_mrs():
@@ -1331,7 +1330,7 @@ def test_miri_mrs():
     ds.calc_miri(ftab)
 
     input = save_input.data
-    output = ds.input.data                      # ds.input is the output
+    output = ds.input.data  # ds.input is the output
     ix = shape[1] // 2
     iy = shape[0] // 2
 
@@ -1362,7 +1361,7 @@ def test_miri_lrs():
     ds.calc_miri(ftab)
 
     input = save_input.data
-    output = ds.input.data                      # ds.input is the output
+    output = ds.input.data  # ds.input is the output
     # Actual row selection can also require a match with SUBARRAY.
     rownum = find_row_in_ftab(save_input, ftab, ['filter'],
                               slitname=None, order=None)
@@ -1379,7 +1378,7 @@ def test_miri_lrs():
     compare = photmjsr * rel_resp
     # Compare the values at the center pixel.
     ratio = output[iy, ix] / input[iy, ix]
-    assert(np.allclose(ratio, compare, rtol=1.e-7))
+    assert (np.allclose(ratio, compare, rtol=1.e-7))
 
 
 def test_miri_image():
@@ -1394,7 +1393,7 @@ def test_miri_image():
     ds.calc_miri(ftab)
 
     input = save_input.data
-    output = ds.input.data                      # ds.input is the output
+    output = ds.input.data  # ds.input is the output
     rownum = find_row_in_ftab(save_input, ftab, ['filter'],
                               slitname=None, order=None)
     photmjsr = ftab.phot_table['photmjsr'][rownum]
@@ -1404,7 +1403,7 @@ def test_miri_image():
     compare = photmjsr
     # Compare the values at the center pixel.
     ratio = output[iy, ix] / input[iy, ix]
-    assert(np.allclose(ratio, compare, rtol=1.e-7))
+    assert (np.allclose(ratio, compare, rtol=1.e-7))
 
 
 def test_nircam_image():
@@ -1418,7 +1417,7 @@ def test_nircam_image():
     ds.calc_nircam(ftab)
 
     input = save_input.data
-    output = ds.input.data                      # ds.input is the output
+    output = ds.input.data  # ds.input is the output
     rownum = find_row_in_ftab(save_input, ftab, ['filter', 'pupil'],
                               slitname=None, order=None)
     photmjsr = ftab.phot_table['photmjsr'][rownum]
@@ -1428,7 +1427,7 @@ def test_nircam_image():
     compare = photmjsr
     # Compare the values at the center pixel.
     ratio = output[iy, ix] / input[iy, ix]
-    assert(np.allclose(ratio, compare, rtol=1.e-7))
+    assert (np.allclose(ratio, compare, rtol=1.e-7))
 
 
 def test_nircam_spec():
@@ -1443,9 +1442,8 @@ def test_nircam_spec():
     ds.calc_nircam(ftab)
 
     for (k, slit) in enumerate(save_input.slits):
-
         input = slit.data
-        output = ds.input.slits[k].data         # ds.input is the output
+        output = ds.input.slits[k].data  # ds.input is the output
         rownum = find_row_in_ftab(save_input, ftab, ['filter', 'pupil'],
                                   slitname=None, order=None)
         photmjsr = ftab.phot_table['photmjsr'][rownum]
@@ -1464,7 +1462,7 @@ def test_nircam_spec():
         compare = photmjsr * rel_resp
         # Compare the values at the center pixel.
         ratio = output[iy, ix] / input[iy, ix]
-        assert(np.allclose(ratio, compare, rtol=1.e-7))
+        assert (np.allclose(ratio, compare, rtol=1.e-7))
 
 
 def test_fgs():
@@ -1478,7 +1476,7 @@ def test_fgs():
     ds.calc_fgs(ftab)
 
     input = save_input.data
-    output = ds.input.data                      # ds.input is the output
+    output = ds.input.data  # ds.input is the output
     # The FGS reference file has only one row, and there is no selection
     # criterion.
     rownum = 0
@@ -1489,7 +1487,7 @@ def test_fgs():
     compare = photmjsr
     # Compare the values at the center pixel.
     ratio = output[iy, ix] / input[iy, ix]
-    assert(np.allclose(ratio, compare, rtol=1.e-7))
+    assert (np.allclose(ratio, compare, rtol=1.e-7))
 
 
 def test_apply_photom_1():
@@ -1518,10 +1516,10 @@ def test_apply_photom_1():
     # (and other photom models) can take either an open model or the name of
     # a file as input.
     output_model = ds.apply_photom(ftab, area_ref)
-    assert(math.isclose(output_model.meta.photometry.pixelarea_steradians,
-                        area_ster, rel_tol=1.e-7))
-    assert(math.isclose(output_model.meta.photometry.pixelarea_arcsecsq,
-                        area_a2, rel_tol=1.e-7))
+    assert (math.isclose(output_model.meta.photometry.pixelarea_steradians,
+                         area_ster, rel_tol=1.e-7))
+    assert (math.isclose(output_model.meta.photometry.pixelarea_arcsecsq,
+                         area_a2, rel_tol=1.e-7))
 
 
 @pytest.mark.parametrize('srctype', ['POINT', 'EXTENDED'])
@@ -1569,7 +1567,7 @@ def test_apply_photom_2(srctype):
     # I want these to be the values in steradians, but the column in the
     # pixel area reference file has values in arcsec^2.
     pixarea = np.array([991., 992., 2., 994., 995.], dtype=np.float32)
-    pixarea /= A2_TO_SR                 # convert from sr to arcsec^2
+    pixarea /= A2_TO_SR  # convert from sr to arcsec^2
 
     area_ref = create_msa_pixel_area_ref(quadrant, shutter_x, shutter_y,
                                          pixarea)
@@ -1585,7 +1583,7 @@ def test_apply_photom_2(srctype):
 
     result = []
     for (k, slit) in enumerate(save_input.slits):
-        input = slit.data                       # this is from save_input
+        input = slit.data  # this is from save_input
         output = output_model.slits[k].data
 
         shape = input.shape

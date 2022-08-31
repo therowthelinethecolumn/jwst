@@ -1,16 +1,16 @@
 import logging
+
 import numpy as np
+from astropy import stats
 from photutils.aperture import (CircularAperture, CircularAnnulus,
                                 RectangularAperture, aperture_photometry)
-
-from .apply_apcorr import select_apcorr
-from ..assign_wcs.util import compute_scale
-from astropy import stats
-from .. import datamodels
-from ..datamodels import dqflags
+from scipy.interpolate import interp1d
 
 from . import spec_wcs
-from scipy.interpolate import interp1d
+from .apply_apcorr import select_apcorr
+from .. import datamodels
+from ..assign_wcs.util import compute_scale
+from ..datamodels import dqflags
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -117,7 +117,7 @@ def ifu_extract1d(input_model, ref_dict, source_type, subtract_background,
              background, b_var_poisson, b_var_rnoise, b_var_flat, npixels, dq, npixels_bkg,
              radius_match, x_center, y_center) = \
                 extract_ifu(input_model, source_type, extract_params)
-        else:                                   # FILE_TYPE_IMAGE
+        else:  # FILE_TYPE_IMAGE
             (ra, dec, wavelength, temp_flux, f_var_poisson, f_var_rnoise, f_var_flat,
              background, b_var_poisson, b_var_rnoise, b_var_flat, npixels, dq, npixels_bkg,
              x_center, y_center) = \
@@ -581,7 +581,7 @@ def extract_ifu(input_model, source_type, extract_params):
 
         # There is no valid data for this region. To prevent the code from
         # crashing set aperture_area to a nonzero value. It will have the dq flag
-        if(aperture_area == 0 and aperture.area > 0):
+        if (aperture_area == 0 and aperture.area > 0):
             aperture_area = aperture.area
 
         if subtract_background and annulus is not None:
@@ -590,7 +590,7 @@ def extract_ifu(input_model, source_type, extract_params):
                                              method=method, subpixels=subpixels)
             annulus_area = float(phot_table['aperture_sum'][0])
 
-            if(annulus_area == 0 and annulus.area > 0):
+            if (annulus_area == 0 and annulus.area > 0):
                 annulus_area = annulus.area
 
             if annulus_area > 0.:
@@ -732,23 +732,23 @@ def locn_from_wcs(input_model, ra_targ, dec_targ):
         # output arrays will be 2-D.
         (ra_i, dec_i, wl) = input_model.meta.wcs(grid[1], grid[0], z)
         cart = celestial_to_cartesian(ra_i, dec_i)
-        v = celestial_to_cartesian(ra_targ, dec_targ)   # a single vector
+        v = celestial_to_cartesian(ra_targ, dec_targ)  # a single vector
         diff = cart - v
         # We want the pixel with the minimum distance from v, but the pixel
         # with the minimum value of distance squared will be the same.
-        dist2 = (diff**2).sum(axis=-1)
+        dist2 = (diff ** 2).sum(axis=-1)
         nan_mask = np.isnan(wl)
         dist2[..., :] = np.where(nan_mask, HUGE_DIST, dist2[..., :])
         del nan_mask
         k = np.argmin(dist2.ravel())
-        (j, i) = divmod(k, dist2.shape[1])      # y, x coordinates
+        (j, i) = divmod(k, dist2.shape[1])  # y, x coordinates
 
         if i <= 0 or j <= 0 or i >= shape[-1] - 1 or j >= shape[-2] - 1:
             log.warning("WCS implies the target is beyond the edge of the image")
             log.warning("This location will not be used")
             locn = None
         else:
-            locn = (i, j)                       # x, y coordinates
+            locn = (i, j)  # x, y coordinates
 
     return locn
 
@@ -945,7 +945,7 @@ def image_extract_ifu(input_model, source_type, extract_params):
         (x_center, y_center) = locn
         # Shift the reference image so it will be centered at locn.
         # Only shift by a whole number of pixels.
-        delta_x = int(round(x_center - x0))         # must be integer
+        delta_x = int(round(x_center - x0))  # must be integer
         delta_y = int(round(y_center - y0))
         log.debug("Shifting reference image by %g in X and %g in Y",
                   delta_x, delta_y)
@@ -997,8 +997,8 @@ def image_extract_ifu(input_model, source_type, extract_params):
     else:
         temp_flux = (data * mask_target).sum(axis=2, dtype=np.float64).sum(axis=1)
 
-    # Extended source data, sigma clip outliers of extraction region is performed
-    # at each wavelength plane.
+        # Extended source data, sigma clip outliers of extraction region is performed
+        # at each wavelength plane.
         (background, b_var_poisson, b_var_rnoise,
          b_var_flat, n_bkg) = sigma_clip_extended_region(data, var_poisson, var_rnoise,
                                                          var_flat, mask_target,

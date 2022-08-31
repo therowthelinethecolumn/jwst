@@ -2,11 +2,12 @@
 Unit tests for gain_scale correction
 """
 
-from jwst.datamodels import CubeModel
-from jwst.gain_scale.gain_scale import do_correction
-from jwst.gain_scale import GainScaleStep
 import numpy as np
 import pytest
+
+from jwst.datamodels import CubeModel
+from jwst.gain_scale import GainScaleStep
+from jwst.gain_scale.gain_scale import do_correction
 
 
 def test_correction(make_cubemodel):
@@ -16,7 +17,7 @@ def test_correction(make_cubemodel):
     gf = datmod.meta.exposure.gain_factor
     output = do_correction(datmod, gain_factor=gf)
 
-    assert(output.meta.cal_step.gain_scale == 'COMPLETE')
+    assert (output.meta.cal_step.gain_scale == 'COMPLETE')
     assert np.all(output.data == datmod.data * gf)
     assert np.all(output.err == datmod.err * gf)
     assert np.all(output.var_poisson == datmod.var_poisson * gf * gf)
@@ -30,7 +31,7 @@ def test_step(make_cubemodel):
     gf = datmod.meta.exposure.gain_factor
     output = GainScaleStep.call(datmod)
 
-    assert(output.meta.cal_step.gain_scale == 'COMPLETE')
+    assert (output.meta.cal_step.gain_scale == 'COMPLETE')
     assert np.all(output.data == datmod.data * gf)
     assert np.all(output.err == datmod.err * gf)
     assert np.all(output.var_poisson == datmod.var_poisson * gf * gf)

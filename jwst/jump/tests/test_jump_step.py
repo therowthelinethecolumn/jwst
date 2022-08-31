@@ -1,10 +1,10 @@
 from itertools import cycle
 
-import pytest
 import numpy as np
+import pytest
 
-from jwst.datamodels import RampModel
 from jwst.datamodels import GainModel, ReadnoiseModel
+from jwst.datamodels import RampModel
 from jwst.jump import JumpStep
 
 MAXIMUM_CORES = ['none', 'quarter', 'half', 'all']
@@ -74,7 +74,6 @@ def generate_nircam_reffiles(tmpdir_factory):
 
 @pytest.fixture
 def setup_inputs():
-
     def _setup(ngroups=10, readnoise=10, nints=1, nrows=1024, ncols=1032,
                nframes=1, grouptime=1.0, gain=1, deltatime=1):
         times = np.array(list(range(ngroups)), dtype=np.float64) * deltatime
@@ -250,7 +249,7 @@ def test_two_group_integration(generate_miri_reffiles, max_cores, setup_inputs):
                                                           deltatime=grouptime)
     out_model = JumpStep.call(model1, override_gain=override_gain,
                               override_readnoise=override_readnoise, maximum_cores=max_cores)
-    assert(out_model.meta.cal_step.jump == 'SKIPPED')
+    assert (out_model.meta.cal_step.jump == 'SKIPPED')
 
 
 def test_three_group_integration(generate_miri_reffiles, setup_inputs):

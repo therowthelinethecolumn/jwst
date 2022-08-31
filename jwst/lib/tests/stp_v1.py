@@ -58,12 +58,13 @@ PC2_2
 It does not currently place the new keywords in any particular location
 in the header other than what is required by the standard.
 '''
-from collections import namedtuple
 import logging
+from collections import namedtuple
 
 import astropy.io.fits as fits
 import numpy as np
 from numpy import cos, sin
+
 from jwst.lib.engdb_tools import ENGDB_Service
 
 logger = logging.getLogger(__name__)
@@ -181,7 +182,7 @@ def vector_to_ra_dec(v):
     dec = np.arcsin(v[2])
     if ra < 0.:
         ra += 2. * np.pi
-    return(ra, dec)
+    return (ra, dec)
 
 
 R2D = 180. / np.pi
@@ -240,14 +241,14 @@ def calc_wcs(v2ref, v3ref, v3idlyang, vidlparity,
     q1, q2, q3, q4 = q
     m_eci2j = np.array(
         [[1. - 2. * q2 * q2 - 2. * q3 * q3,
-            2. * (q1 * q2 + q3 * q4),
-            2. * (q3 * q1 - q2 * q4)],
+          2. * (q1 * q2 + q3 * q4),
+          2. * (q3 * q1 - q2 * q4)],
          [2. * (q1 * q2 - q3 * q4),
-            1. - 2. * q3 * q3 - 2. * q1 * q1,
-            2. * (q2 * q3 + q1 * q4)],
+          1. - 2. * q3 * q3 - 2. * q1 * q1,
+          2. * (q2 * q3 + q1 * q4)],
          [2. * (q3 * q1 + q2 * q4),
-            2. * (q2 * q3 - q1 * q4),
-            1. - 2. * q1 * q1 - 2. * q2 * q2]])
+          2. * (q2 * q3 - q1 * q4),
+          1. - 2. * q1 * q1 - 2. * q2 * q2]])
 
     mj2fgs1 = np.array(j2fgs_matrix).reshape((3, 3)).transpose()
 

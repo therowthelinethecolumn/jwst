@@ -2,8 +2,8 @@ import numpy as np
 
 from jwst.datamodels import RampModel
 from jwst.datamodels import dqflags
-from jwst.firstframe.firstframe_sub import do_correction
 from jwst.firstframe import FirstFrameStep
+from jwst.firstframe.firstframe_sub import do_correction
 
 
 def test_firstframe_set_groupdq():
@@ -37,7 +37,7 @@ def test_firstframe_set_groupdq():
                                           dtype=int),
                                   dq_diff,
                                   err_msg='Diff in groupdq flags is not '
-                                  + 'equal to the DO_NOT_USE flag')
+                                          + 'equal to the DO_NOT_USE flag')
 
     # test that the groupdq flags are not changed for the rest of the groups
     dq_diff = (dm_ramp_firstframe.groupdq[0, 1:ngroups, :, :]
@@ -47,7 +47,7 @@ def test_firstframe_set_groupdq():
                                           dtype=int),
                                   dq_diff,
                                   err_msg='n >= 2 groupdq flags changes '
-                                  + 'and they should not be')
+                                          + 'and they should not be')
 
 
 def test_firstframe_single_group():
@@ -82,7 +82,7 @@ def test_firstframe_single_group():
                                           dtype=int),
                                   dq_diff,
                                   err_msg='groupdq changed for single group '
-                                  + 'when it should not')
+                                          + 'when it should not')
 
 
 def test_firstframe_add1_groupdq():
@@ -111,7 +111,7 @@ def test_firstframe_add1_groupdq():
     dm_ramp_firstframe = do_correction(dm_ramp)
 
     # test if pixels in groupdq were incremented in value by 1
-    assert(dm_ramp_firstframe.groupdq[0, 0, 505, 505] == 5)
+    assert (dm_ramp_firstframe.groupdq[0, 0, 505, 505] == 5)
 
 
 def test_firstframe_3groups():
@@ -146,7 +146,7 @@ def test_firstframe_3groups():
                                           dtype=int),
                                   dq_diff,
                                   err_msg='Diff in groupdq flags is not '
-                                  + 'equal to 0')
+                                          + 'equal to 0')
 
 
 def test_nircam():

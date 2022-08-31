@@ -4,12 +4,12 @@ Unit tests for saturation flagging
 
 """
 
-import pytest
 import numpy as np
+import pytest
 
+from jwst.datamodels import RampModel, SaturationModel, dqflags
 from jwst.saturation import SaturationStep
 from jwst.saturation.saturation import flag_saturation, irs2_flag_saturation
-from jwst.datamodels import RampModel, SaturationModel, dqflags
 
 
 def test_basic_saturation_flagging(setup_nrc_cube):
@@ -28,7 +28,7 @@ def test_basic_saturation_flagging(setup_nrc_cube):
     data.data[0, 0, 5, 5] = 0
     data.data[0, 1, 5, 5] = 20000
     data.data[0, 2, 5, 5] = 40000
-    data.data[0, 3, 5, 5] = 60000   # Signal reaches saturation limit
+    data.data[0, 3, 5, 5] = 60000  # Signal reaches saturation limit
     data.data[0, 4, 5, 5] = 62000
 
     # Set saturation value in the saturation model
@@ -152,7 +152,7 @@ def test_ad_floor_and_saturation_flagging(setup_nrc_cube):
                   == dqflags.group['DO_NOT_USE'] | dqflags.group['AD_FLOOR'])
     # Check if the right frames are flagged as saturated
     assert np.all(np.bitwise_and(output.groupdq[0, satindxs, 4:6, 4:6],
-                  dqflags.group['SATURATED']) == dqflags.group['SATURATED'])
+                                 dqflags.group['SATURATED']) == dqflags.group['SATURATED'])
 
 
 def test_signal_fluctuation_flagging(setup_nrc_cube):
@@ -172,8 +172,8 @@ def test_signal_fluctuation_flagging(setup_nrc_cube):
     data.data[0, 0, 5, 5] = 10
     data.data[0, 1, 5, 5] = 20000
     data.data[0, 2, 5, 5] = 40000
-    data.data[0, 3, 5, 5] = 60000   # Signal reaches saturation limit
-    data.data[0, 4, 5, 5] = 40000   # Signal drops below saturation limit
+    data.data[0, 3, 5, 5] = 60000  # Signal reaches saturation limit
+    data.data[0, 4, 5, 5] = 40000  # Signal drops below saturation limit
 
     # Set saturation value in the saturation model
     satmap.data[5, 5] = satvalue
@@ -239,14 +239,14 @@ def test_subarray_extraction(setup_miri_cube):
     output = flag_saturation(data, satmap, n_pix_grow_sat=1)
 
     # Check for DQ flag in PIXELDQ of subarray image
-    assert(output.pixeldq[76, 100] == dqflags.pixel['DO_NOT_USE'])
-    assert(output.pixeldq[76, 104] == dqflags.pixel['DO_NOT_USE'])
+    assert (output.pixeldq[76, 100] == dqflags.pixel['DO_NOT_USE'])
+    assert (output.pixeldq[76, 104] == dqflags.pixel['DO_NOT_USE'])
 
     # Pixel 84, 100 in subarray maps to 550, 100 in reference file
     # Check that pixel was flagged 'NO_SAT_CHECK' and that original
     # DQ flag persists (i.e. did not get overwritten)
-    assert(output.pixeldq[84, 100] ==
-           dqflags.pixel['NO_SAT_CHECK'] + dqflags.pixel['NONLINEAR'])
+    assert (output.pixeldq[84, 100] ==
+            dqflags.pixel['NO_SAT_CHECK'] + dqflags.pixel['NONLINEAR'])
 
 
 def test_dq_propagation(setup_nrc_cube):
@@ -289,7 +289,7 @@ def test_no_sat_check(setup_nrc_cube):
     data.data[0, 1, 5, 5] = 20000
     data.data[0, 2, 5, 5] = 40000
     data.data[0, 3, 5, 5] = 60000
-    data.data[0, 4, 5, 5] = 62000   # Signal reaches saturation limit
+    data.data[0, 4, 5, 5] = 62000  # Signal reaches saturation limit
 
     # Set saturation value in the saturation model & DQ value for NO_SAT_CHECK
     satmap.data[5, 5] = satvalue
@@ -357,7 +357,7 @@ def test_full_step(setup_nrc_cube):
     data.data[0, 0, 5, 5] = 10
     data.data[0, 1, 5, 5] = 20000
     data.data[0, 2, 5, 5] = 40000
-    data.data[0, 3, 5, 5] = 70000   # Signal reaches saturation limit
+    data.data[0, 3, 5, 5] = 70000  # Signal reaches saturation limit
     data.data[0, 4, 5, 5] = 73000
 
     # Run the pipeline
@@ -376,7 +376,6 @@ def setup_nrc_cube():
     ''' Set up fake NIRCam data to test.'''
 
     def _cube(ngroups, nrows, ncols):
-
         nints = 1
 
         data_model = RampModel((nints, ngroups, nrows, ncols))
@@ -413,7 +412,6 @@ def setup_miri_cube():
     ''' Set up fake MIRI data to test.'''
 
     def _cube(xstart, ystart, ngroups, nrows, ncols):
-
         nints = 1
 
         # create a JWST datamodel for MIRI data
@@ -454,9 +452,7 @@ def setup_miri_cube():
 
 @pytest.fixture(scope='function')
 def setup_nrs_irs2_cube():
-
     def _cube():
-
         # create a JWST datamodel for NIRSPEC IRS2 data
         data_model = RampModel((1, 5, 3200, 2048))
         data_model.data = np.ones(((1, 5, 3200, 2048)))
@@ -494,4 +490,5 @@ def setup_nrs_irs2_cube():
         saturation_model.meta.subarray.ysize = 2048
 
         return data_model, saturation_model
+
     return _cube

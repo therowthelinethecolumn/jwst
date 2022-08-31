@@ -3,10 +3,11 @@
 Authors:
     M. Cracraft
 """
+import numpy as np
+
+from jwst.datamodels import dqflags, LinearityModel, RampModel
 from jwst.linearity import LinearityStep
 from jwst.linearity.linearity import do_correction as lincorr
-from jwst.datamodels import dqflags, LinearityModel, RampModel
-import numpy as np
 
 
 def test_coeff_dq():
@@ -90,8 +91,8 @@ def test_coeff_dq():
     outfile = lincorr(im, ref_model)
 
     # check that multiplication of polynomial was done correctly for specified pixel
-    outval = L0 + (L1 * scival) + (L2 * scival**2) + (L3 * scival**3) + (L4 * scival**4)
-    assert(np.isclose(outfile.data[0, 45, 30, 50], outval, rtol=0.00001))
+    outval = L0 + (L1 * scival) + (L2 * scival ** 2) + (L3 * scival ** 3) + (L4 * scival ** 4)
+    assert (np.isclose(outfile.data[0, 45, 30, 50], outval, rtol=0.00001))
 
     # check that dq value was handled correctly
     assert outfile.pixeldq[35, 35] == dqflags.pixel['DO_NOT_USE']
@@ -166,8 +167,8 @@ def test_nolincorr():
     # run through pipeline (saturation and linearity steps)
     outfile = lincorr(im, ref_model)
 
-    assert(outfile.pixeldq[500, 500] == dqflags.pixel['NO_LIN_CORR'])
-    assert(outfile.data[0, 5, 500, 500] == 35)  # NO_LIN_CORR, sci value should not change
+    assert (outfile.pixeldq[500, 500] == dqflags.pixel['NO_LIN_CORR'])
+    assert (outfile.data[0, 5, 500, 500] == 35)  # NO_LIN_CORR, sci value should not change
 
 
 def test_pixeldqprop():
@@ -217,11 +218,11 @@ def test_pixeldqprop():
     # run through linearity correction
     outfile = lincorr(im, ref_model)
 
-    assert(outfile.pixeldq[500, 500] == dqflags.pixel['NO_LIN_CORR'])
-    assert(outfile.pixeldq[550, 550] == dqflags.pixel['DO_NOT_USE'])
-    assert(outfile.pixeldq[560, 550] == dqflags.pixel['HOT'])
-    assert(outfile.pixeldq[550, 560] == dqflags.pixel['DEAD'])
-    assert(outfile.pixeldq[500, 300] == np.bitwise_or(dqflags.pixel['HOT'], dqflags.pixel['DO_NOT_USE']))
+    assert (outfile.pixeldq[500, 500] == dqflags.pixel['NO_LIN_CORR'])
+    assert (outfile.pixeldq[550, 550] == dqflags.pixel['DO_NOT_USE'])
+    assert (outfile.pixeldq[560, 550] == dqflags.pixel['HOT'])
+    assert (outfile.pixeldq[550, 560] == dqflags.pixel['DEAD'])
+    assert (outfile.pixeldq[500, 300] == np.bitwise_or(dqflags.pixel['HOT'], dqflags.pixel['DO_NOT_USE']))
 
 
 def test_lin_subarray():
@@ -263,7 +264,7 @@ def test_lin_subarray():
     ref_model = LinearityModel((numcoeffs, 1024, 1032))
     # set all the linear terms =1, so it does not trip the check if
     # the linear terms = 0, which results in DQ of NO_LIN_CORR
-    ref_model.coeffs[1,:,:] = 1
+    ref_model.coeffs[1, :, :] = 1
     ref_model.dq = dq
 
     ref_model.meta.instrument.name = 'MIRI'
@@ -285,8 +286,8 @@ def test_lin_subarray():
     outpixdq = outfile.pixeldq
 
     # check for dq flag in pixeldq of subarray image
-    assert(outpixdq[76, 100] == 1)
-    assert(outpixdq[76, 104] == 1)
+    assert (outpixdq[76, 100] == 1)
+    assert (outpixdq[76, 104] == 1)
 
 
 def test_err_array():

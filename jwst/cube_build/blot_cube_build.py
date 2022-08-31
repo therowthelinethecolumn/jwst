@@ -1,13 +1,16 @@
 """ Main module for blotting sky cube back to detector space
 """
-import numpy as np
 import logging
-from .. import datamodels
-from ..assign_wcs import nirspec
+
+import numpy as np
 from gwcs import wcstools
+
 from jwst.assign_wcs.util import in_ifu_slice
 from . import instrument_defaults
 from .blot_median import blot_wrapper  # c extension
+from .. import datamodels
+from ..assign_wcs import nirspec
+
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
@@ -104,6 +107,7 @@ class CubeBlot():
             if found1 > -1 and found2 > -1:
                 self.input_models.append(model)
                 self.input_list_number.append(icount)
+
     # **********************************************************************
 
     def blot_info(self):
@@ -132,6 +136,7 @@ class CubeBlot():
         elif self.instrument == 'NIRSPEC':
             blotmodels = self.blot_images_nirspec()
         return blotmodels, self.input_list_number
+
     # ************************************************************************
 
     def blot_images_miri(self):
@@ -167,8 +172,7 @@ class CubeBlot():
             ydet, xdet = np.mgrid[:ysize, :xsize]
             ydet = ydet.flatten()
             xdet = xdet.flatten()
-            self.ycenter_grid, self.xcenter_grid = np.mgrid[0:ysize,
-                                                            0:xsize]
+            self.ycenter_grid, self.xcenter_grid = np.mgrid[0:ysize,0:xsize]
 
             xsize2 = xend - xstart + 1
             xcenter = np.arange(xsize2) + xstart
@@ -266,8 +270,8 @@ class CubeBlot():
                 # for each slice pull out the blotted values that actually fall on the slice region
                 # use the bounding box of each slice to determine the slice limits
                 slice_wcs = nirspec.nrs_wcs_set_input(model, ii)
-                slicer2world = slice_wcs.get_transform('slicer','world')
-                detector2slicer = slice_wcs.get_transform('detector','slicer')
+                slicer2world = slice_wcs.get_transform('slicer', 'world')
+                detector2slicer = slice_wcs.get_transform('detector', 'slicer')
 
                 # find some rough limits on ra,dec, lambda using the x,y -> ra,dec,lambda
                 x, y = wcstools.grid_from_bounding_box(slice_wcs.bounding_box)
@@ -284,15 +288,15 @@ class CubeBlot():
                 decmax = np.nanmax(dec) + self.median_skycube.meta.wcsinfo.cdelt2 * 4
                 lam_min = np.nanmin(lam)
                 lam_max = np.nanmax(lam)
-                if(ramin < 0):
+                if (ramin < 0):
                     ramin = 0
-                if(ramax > 360):
+                if (ramax > 360):
                     ramax = 360
 
                 use1 = np.logical_and(self.cube_ra >= ramin, self.cube_ra <= ramax)
                 use2 = np.logical_and(self.cube_dec >= decmin, self.cube_dec <= decmax)
                 use3 = np.logical_and(self.cube_wave >= lam_min, self.cube_wave <= lam_max)
-                use = np.logical_and(np.logical_and(use1, use2),use3)
+                use = np.logical_and(np.logical_and(use1, use2), use3)
 
                 ra_use = self.cube_ra[use]
                 dec_use = self.cube_dec[use]
@@ -300,10 +304,10 @@ class CubeBlot():
                 flux_use = self.cube_flux[use]
 
                 # get the indices of elements on the slice
-                onslice_ind = in_ifu_slice(slice_wcs,ra_use,dec_use,wave_use)
+                onslice_ind = in_ifu_slice(slice_wcs, ra_use, dec_use, wave_use)
                 slx, sly, sllam = slicer2world.inverse(ra_use, dec_use, wave_use)
-                xslice,yslice = detector2slicer.inverse(slx[onslice_ind], sly[onslice_ind],
-                                                        sllam[onslice_ind])
+                xslice, yslice = detector2slicer.inverse(slx[onslice_ind], sly[onslice_ind],
+                                                         sllam[onslice_ind])
                 # pull out region for slice
                 fluxslice = flux_use[onslice_ind]
 
@@ -312,7 +316,7 @@ class CubeBlot():
                 xlimit, ylimit = slice_wcs.bounding_box
                 xuse = np.logical_and(xslice >= xlimit[0], xslice <= xlimit[1])
                 yuse = np.logical_and(yslice >= ylimit[0], yslice <= ylimit[1])
-                use = np.logical_and(xuse,yuse)
+                use = np.logical_and(xuse, yuse)
                 xuse = xslice[use]
                 yuse = yslice[use]
                 flux_use = fluxslice[use]

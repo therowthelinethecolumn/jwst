@@ -2,36 +2,32 @@
 Utility function for assign_wcs.
 
 """
-import logging
 import functools
-import numpy as np
+import logging
+from typing import Union, List
 
+import numpy as np
+from astropy.constants import c
 from astropy.coordinates import SkyCoord
-from astropy.utils.misc import isiterable
 from astropy.io import fits
 from astropy.modeling import models as astmodels
 from astropy.table import QTable
-from astropy.constants import c
-from typing import Union, List
-
+from astropy.utils.misc import isiterable
 from gwcs import WCS
-from gwcs.wcstools import wcs_from_fiducial, grid_from_bounding_box
 from gwcs import utils as gwutils
+from gwcs.wcstools import wcs_from_fiducial, grid_from_bounding_box
 from stdatamodels import DataModel
 from stpipe.exceptions import StpipeExitException
 
 from . import pointing
+from ..datamodels import WavelengthrangeModel
 from ..lib.catalog_utils import SkyObject
 from ..transforms.models import GrismObject
-from ..datamodels import WavelengthrangeModel
-
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-
 _MAX_SIP_DEGREE = 6
-
 
 __all__ = ["reproject", "wcs_from_footprints", "velocity_correction",
            "MSAFileError", "NoDataOnDetectorError", "compute_scale",
@@ -96,6 +92,7 @@ def reproject(wcs1, wcs2):
     def _reproject(x, y):
         sky = wcs1.forward_transform(x, y)
         return wcs2.backward_transform(*sky)
+
     return _reproject
 
 
@@ -693,7 +690,6 @@ def create_grism_bbox(input_model,
 
 def _create_grism_bbox(input_model, mmag_extract=None, wfss_extract_half_height=None,
                        wavelength_range=None, nbright=None):
-
     log.debug(f'Extracting with wavelength_range {wavelength_range}')
 
     # this contains the pure information from the catalog with no translations
@@ -785,8 +781,8 @@ def _create_grism_bbox(input_model, mmag_extract=None, wfss_extract_half_height=
                     # placed into the subarray extent.
                     pts = np.array([[ymin, xmin], [ymax, xmax]])
                     subarr_extent = np.array([[0, 0],
-                                             [input_model.meta.subarray.ysize - 1,
-                                              input_model.meta.subarray.xsize - 1]])
+                                              [input_model.meta.subarray.ysize - 1,
+                                               input_model.meta.subarray.xsize - 1]])
 
                     if input_model.meta.wcsinfo.dispersion_direction == 1:
                         # X-axis is dispersion direction
@@ -994,9 +990,9 @@ def compute_footprint_spectral(model):
     max_ra = np.nanmax(ra)
 
     # for the footprint we want the ra values to fall between 0 to 360
-    if(min_ra < 0):
+    if (min_ra < 0):
         min_ra = min_ra + 360.0
-    if(max_ra >= 360.0):
+    if (max_ra >= 360.0):
         max_ra = max_ra - 360.0
     footprint = np.array([[min_ra, np.nanmin(dec)],
                           [max_ra, np.nanmin(dec)],
@@ -1123,9 +1119,9 @@ def compute_footprint_nrs_ifu(dmodel, mod):
     ra_max = np.nanmax(ra_total)
     ra_min = np.nanmin(ra_total)
     # for the footprint we want ra to be between 0 to 360
-    if(ra_min < 0):
+    if (ra_min < 0):
         ra_min = ra_min + 360.0
-    if(ra_max >= 360.0):
+    if (ra_max >= 360.0):
         ra_max = ra_max - 360.0
 
     dec_max = np.nanmax(dec_total)
@@ -1209,10 +1205,10 @@ def wrap_ra(ravalues):
     nwrap = wrap_index[0].size
 
     # get all the ra on the same "side" of 0/360
-    if(nwrap != 0 and median_ra < 180):
+    if (nwrap != 0 and median_ra < 180):
         ravalues_wrap[wrap_index] = ravalues_wrap[wrap_index] - 360.0
 
-    if(nwrap != 0 and median_ra > 180):
+    if (nwrap != 0 and median_ra > 180):
         ravalues_wrap[wrap_index] = ravalues_wrap[wrap_index] + 360.0
 
     # if the input ravaules are a list - return a list
@@ -1243,7 +1239,7 @@ def in_ifu_slice(slice_wcs, ra, dec, lam):
 
     # Compute the slice X coordinate using the center of the slit.
     SLX, _, _ = slice_wcs.get_transform('slit_frame', 'slicer')(0, 0, 2e-6)
-    onslice_ind = np.isclose(slx, SLX,atol=5e-4)
+    onslice_ind = np.isclose(slx, SLX, atol=5e-4)
 
     return onslice_ind
 

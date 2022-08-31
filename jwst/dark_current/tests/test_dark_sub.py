@@ -2,19 +2,15 @@
 Unit tests for dark current correction
 """
 
-import pytest
 import numpy as np
+import pytest
 from numpy.testing import assert_allclose
-
+from stcal.dark_current.dark_class import DarkData
 from stcal.dark_current.dark_sub import average_dark_frames_3d as average_dark_frames
 from stcal.dark_current.dark_sub import do_correction as darkcorr
 
-from stcal.dark_current.dark_class import DarkData
-
 from jwst.dark_current.dark_current_step import DarkCurrentStep
-
 from jwst.datamodels import RampModel, DarkModel, DarkMIRIModel, dqflags
-
 
 # Define frame_time and number of groups in the generated dark reffile
 TFRAME = 10.73677
@@ -28,7 +24,6 @@ def setup_nrc_cube():
     '''Set up fake NIRCam data to test.'''
 
     def _cube(readpatt, ngroups, nframes, groupgap, nrows, ncols):
-
         nints = 1
 
         data_model = RampModel((nints, ngroups, nrows, ncols))
@@ -131,13 +126,12 @@ def test_frame_averaging(setup_nrc_cube, readpatt, ngroups, nframes, groupgap, n
 
     # Manually average the input data to compare with pipeline output
     for newgp, gstart, gend in zip(range(ngroups), gstrt_ind, gend_ind):
-
         # Average the data frames
         newframe = np.mean(dark.data[gstart:gend, 10, 10])
         manual_avg[newgp] = newframe
 
         # ERR arrays will be quadratic sum of error values
-        manual_errs[newgp] = np.sqrt(np.sum(dark.err[gstart:gend, 10, 10]**2)) / (gend - gstart)
+        manual_errs[newgp] = np.sqrt(np.sum(dark.err[gstart:gend, 10, 10] ** 2)) / (gend - gstart)
 
     # Check that pipeline output matches manual averaging results
     assert_allclose(manual_avg, avg_dark.data[:, 10, 10], rtol=1e-5)
@@ -425,7 +419,7 @@ def test_basic_step(make_rampmodel, make_darkmodel):
 
     dark_model = DarkCurrentStep.call(dm_ramp, override_dark=dark)
 
-    assert(dark_model.meta.cal_step.dark_sub == "COMPLETE")
+    assert (dark_model.meta.cal_step.dark_sub == "COMPLETE")
 
     outdata = np.squeeze(dark_model.data)
 
@@ -441,7 +435,6 @@ def make_rampmodel():
     '''Make MIRI Ramp model for testing'''
 
     def _ramp(nints, ngroups, ysize, xsize):
-
         # create the data and groupdq arrays
         csize = (nints, ngroups, ysize, xsize)
         data = np.full(csize, 1.0)

@@ -1,13 +1,12 @@
-import pytest
 import numpy as np
-
-from stcal.ramp_fitting.ramp_fit import ramp_fit
+import pytest
 from stcal.ramp_fitting.ols_fit import calc_num_seg
+from stcal.ramp_fitting.ramp_fit import ramp_fit
 
-from jwst.datamodels import dqflags
-from jwst.datamodels import RampModel
 from jwst.datamodels import GainModel
+from jwst.datamodels import RampModel
 from jwst.datamodels import ReadnoiseModel
+from jwst.datamodels import dqflags
 
 GOOD = dqflags.pixel["GOOD"]
 DO_NOT_USE = dqflags.pixel["DO_NOT_USE"]
@@ -15,6 +14,7 @@ JUMP_DET = dqflags.pixel["JUMP_DET"]
 SATURATED = dqflags.pixel["SATURATED"]
 
 DELIM = "-" * 70
+
 
 # single group integrations fail in the GLS fitting
 # so, keep the two method test separate and mark GLS test as
@@ -46,7 +46,6 @@ def test_drop_frames1_not_set():
 
 
 def test_mixed_crs_and_donotuse():
-
     gdq = np.zeros((3, 10, 3, 3), dtype=np.uint32)
 
     # pix with only first and last group flagged DO_NOT_USE;
@@ -62,7 +61,7 @@ def test_mixed_crs_and_donotuse():
 
     # max segments should be 2
     max_seg, max_cr = calc_num_seg(gdq, 3, JUMP_DET, DO_NOT_USE)
-    assert(max_seg == 2)
+    assert (max_seg == 2)
 
     # pix with only 1 middle group flagged DO_NOT_USE;
     # results in 2 segments
@@ -79,7 +78,7 @@ def test_mixed_crs_and_donotuse():
 
     # max segments should now be 3
     max_seg, max_cr = calc_num_seg(gdq, 3, JUMP_DET, DO_NOT_USE)
-    assert(max_seg == 3)
+    assert (max_seg == 3)
 
 
 @pytest.mark.skip(reason="GLS code does not [yet] handle single group integrations.")
@@ -210,6 +209,7 @@ def test_one_group_two_ints_fit_gls():
 
     np.testing.assert_allclose(slopes[0].data[50, 50], 11.0, 1e-6)
 
+
 # tests that apply to both 'ols' and 'gls' are in the TestMethods class so
 # that both can use the parameterized 'method'
 
@@ -226,8 +226,8 @@ class TestMethods:
             model1, 60000, False, rnoise, gain, method, 'optimal', 'none', dqflags.pixel)
 
         data = slopes[0]
-        assert(0 == np.max(data))
-        assert(0 == np.min(data))
+        assert (0 == np.max(data))
+        assert (0 == np.min(data))
 
     def test_nocrs_noflux_firstrows_are_nan(self, method):
         model1, gdq, rnoise, pixdq, err, gain = setup_inputs(ngroups=5)
@@ -237,8 +237,8 @@ class TestMethods:
             model1, 60000, False, rnoise, gain, 'OLS', 'optimal', 'none', dqflags.pixel)
 
         data = slopes[0]
-        assert(0 == np.max(data))
-        assert(0 == np.min(data))
+        assert (0 == np.max(data))
+        assert (0 == np.min(data))
 
     @pytest.mark.xfail(reason="Fails, without frame_time it doesn't work")
     def test_error_when_frame_time_not_set(self, method):
@@ -250,8 +250,8 @@ class TestMethods:
             model1, 64000, False, rnoise, gain, 'OLS', 'optimal', 'none', dqflags.pixel)
 
         data = slopes.data
-        assert(0 == np.max(data))
-        assert(0 == np.min(data))
+        assert (0 == np.max(data))
+        assert (0 == np.min(data))
 
     def test_five_groups_two_ints_Poisson_noise_only(self, method):
         grouptime = 3.0
@@ -289,8 +289,8 @@ class TestMethods:
             model1, 64000, False, rnoise, gain, 'OLS', 'optimal', 'none', dqflags.pixel)
 
         data = slopes[0]
-        assert(0 == np.max(data))
-        assert(0 == np.min(data))
+        assert (0 == np.max(data))
+        assert (0 == np.min(data))
 
     def test_bad_gain_values(self, method):
         # all pixel values are zero. So slope should be zero
@@ -304,8 +304,8 @@ class TestMethods:
 
         data = slopes[0]
         dq = slopes[1]
-        assert(0 == np.max(data))
-        assert(0 == np.min(data))
+        assert (0 == np.max(data))
+        assert (0 == np.min(data))
         assert dq[10, 10] == 524288 + 1
         assert dq[20, 20] == 524288 + 1
 
@@ -553,19 +553,19 @@ class TestMethods:
         single_sample_readnoise = inreadnoise / np.sqrt(2)
         np.testing.assert_allclose(
             var_poisson[50, 50],
-            ((deltaDN / ingain) / grouptime**2),
+            ((deltaDN / ingain) / grouptime ** 2),
             1e-6)
         np.testing.assert_allclose(
             var_rnoise[50, 50],
-            (inreadnoise**2 / grouptime**2),
+            (inreadnoise ** 2 / grouptime ** 2),
             1e-6)
         np.testing.assert_allclose(
             var_rnoise[50, 50],
-            (12 * single_sample_readnoise**2 / (ngroups * (ngroups**2 - 1) * grouptime**2)),
+            (12 * single_sample_readnoise ** 2 / (ngroups * (ngroups ** 2 - 1) * grouptime ** 2)),
             1e-6)
         np.testing.assert_allclose(
             err[50, 50],
-            (np.sqrt((deltaDN / ingain) / grouptime**2 + (inreadnoise**2 / grouptime**2))),
+            (np.sqrt((deltaDN / ingain) / grouptime ** 2 + (inreadnoise ** 2 / grouptime ** 2))),
             1e-6)
 
     def test_five_groups_unc(self, method):
@@ -601,7 +601,7 @@ class TestMethods:
             1e-6)
         np.testing.assert_allclose(
             var_rnoise[50, 50],
-            (12 * single_sample_readnoise**2 / (ngroups * (ngroups**2 - 1) * grouptime**2)),
+            (12 * single_sample_readnoise ** 2 / (ngroups * (ngroups ** 2 - 1) * grouptime ** 2)),
             1e-6)
         np.testing.assert_allclose(
             err[50, 50],
@@ -641,8 +641,8 @@ class TestMethods:
         ovar_rnoise = opt_info[3]
         np.testing.assert_allclose(
             ovar_rnoise[0, 0, 50, 50],
-            (12.0 * single_sample_readnoise**2 /
-                (segment_groups * (segment_groups**2 - 1) * grouptime**2)),
+            (12.0 * single_sample_readnoise ** 2 /
+             (segment_groups * (segment_groups ** 2 - 1) * grouptime ** 2)),
             rtol=1e-6)
 
         # check the combined slope is the average of the two segments since they have the same number of groups
@@ -720,7 +720,7 @@ def test_twenty_groups_two_segments():
     np.testing.assert_allclose(data, 10. / deltatime, rtol=1E-4)
 
     (oslope, sigslope, var_poisson, var_rnoise,
-        oyint, sigyint, opedestal, weights, crmag) = opt_info
+     oyint, sigyint, opedestal, weights, crmag) = opt_info
 
     wh_data = oslope != 0.  # only test existing segments
     np.testing.assert_allclose(oslope[wh_data], 10. / deltatime, rtol=1E-4)
@@ -832,11 +832,11 @@ def test_zero_frame_usage():
         - The zero group will be replaced and the ZEROFRAME data.
         - The groupdq flag for group 0 will be set to GOOD.
     """
-    dims = 2, 5, 1, 3       # nints, ngroups, nrows, ncols
+    dims = 2, 5, 1, 3  # nints, ngroups, nrows, ncols
     nints, ngroups, nrows, ncols = dims
-    frame_data = 4, 1       # nframes, groupgap
+    frame_data = 4, 1  # nframes, groupgap
     timing = 10.736, 0, 0.  # tframe, tgroup, tgroup0
-    variance = 10., 5.      # rnoise, gain
+    variance = 10., 5.  # rnoise, gain
     model, gmodel, rnmodel = setup_inputs_ramp_model_new(
         dims, frame_data, timing, variance)
 
@@ -1022,7 +1022,6 @@ def setup_small_cube(ngroups=10, nints=1, nrows=2, ncols=2, deltatime=10.,
 # Need test for multi-ints near zero with positive and negative slopes
 def setup_inputs(ngroups=10, readnoise=10, nints=1,
                  nrows=103, ncols=102, nframes=1, grouptime=1.0, gain=1, deltatime=1):
-
     data = np.zeros(shape=(nints, ngroups, nrows, ncols), dtype=np.float32)
     err = np.ones(shape=(nints, ngroups, nrows, ncols), dtype=np.float32)
     pixdq = np.zeros(shape=(nrows, ncols), dtype=np.uint32)

@@ -1,11 +1,10 @@
-import pytest
 import numpy as np
+import pytest
 
-from jwst.ramp_fitting.ramp_fit_step import RampFitStep
-
-from jwst.datamodels import dqflags
-from jwst.datamodels import RampModel
 from jwst.datamodels import GainModel, ReadnoiseModel
+from jwst.datamodels import RampModel
+from jwst.datamodels import dqflags
+from jwst.ramp_fitting.ramp_fit_step import RampFitStep
 
 
 @pytest.fixture(scope="module")
@@ -36,7 +35,6 @@ def generate_miri_reffiles():
 
 @pytest.fixture
 def setup_inputs():
-
     def _setup(ngroups=10, readnoise=10, nints=1, nrows=1024, ncols=1032,
                nframes=1, grouptime=1.0, gain=1, deltatime=1):
         gain = np.ones(shape=(nrows, ncols), dtype=np.float64) * gain
@@ -89,7 +87,6 @@ def setup_subarray_inputs(
         subxstart=1, subxsize=1024, subystart=1, subysize=1032,
         nframes=1, grouptime=1.0, deltatime=1,
         readnoise=10, gain=1):
-
     data = np.zeros(shape=(nints, ngroups, subysize, subxsize), dtype=np.float32)
     err = np.ones(shape=(nints, ngroups, nrows, ncols), dtype=np.float32)
     pixdq = np.zeros(shape=(subysize, subxsize), dtype=np.uint32)
@@ -149,7 +146,7 @@ def test_ramp_fit_step(generate_miri_reffiles, setup_inputs):
     # Add basic ramps to each pixel
     pix = [(0, 0), (0, 1), (1, 0), (1, 1)]
     base_ramp = np.array([k + 1 for k in range(ngroups)])
-    ans_slopes = np.zeros(shape=(2,2))
+    ans_slopes = np.zeros(shape=(2, 2))
     for k, p in enumerate(pix):
         ramp = base_ramp * (k + 1)  # A simple linear ramp
         x, y = p
@@ -222,7 +219,7 @@ def test_int_times1(generate_miri_reffiles, setup_inputs):
     assert slopes is not None
     assert cube_model is not None
 
-    assert(len(cube_model.int_times) == 5)
+    assert (len(cube_model.int_times) == 5)
 
 
 def test_int_times2(generate_miri_reffiles, setup_inputs):
@@ -246,7 +243,7 @@ def test_int_times2(generate_miri_reffiles, setup_inputs):
     assert slopes is not None
     assert cube_model is not None
 
-    assert(len(cube_model.int_times) == nints)
+    assert (len(cube_model.int_times) == nints)
 
 
 def one_group_suppressed(nints, suppress, setup_inputs):
@@ -283,7 +280,7 @@ def one_group_suppressed(nints, suppress, setup_inputs):
     rampmodel.groupdq[0, :, 0, 0] = sat_dq  # All groups sat
     rampmodel.groupdq[0, :, 0, 1] = sat_dq  # 0th good, all others sat
     rampmodel.groupdq[0, 0, 0, 1] = 0
-    rampmodel.groupdq[0, :, 0, 2] = zdq     # All groups good
+    rampmodel.groupdq[0, :, 0, 2] = zdq  # All groups good
 
     if nints > 1:
         rampmodel.data[1, :, 0, 0] = arr
@@ -435,7 +432,7 @@ def test_one_group_not_suppressed_two_integration(setup_inputs):
     np.testing.assert_allclose(slopes.err, check, tol)
 
     # Check slopes information
-    check = np.array([[[0.,        1.,        1.0000001]],
+    check = np.array([[[0., 1., 1.0000001]],
                       [[1.0000001, 1.0000001, 1.0000001]]])
     np.testing.assert_allclose(cube.data, check, tol)
 
@@ -443,15 +440,15 @@ def test_one_group_not_suppressed_two_integration(setup_inputs):
                       [[0, 0, 0]]])
     np.testing.assert_allclose(cube.dq, check, tol)
 
-    check = np.array([[[0.,    0.04, 0.01]],
+    check = np.array([[[0., 0.04, 0.01]],
                       [[0.005, 0.01, 0.01]]])
     np.testing.assert_allclose(cube.var_poisson, check, tol)
 
-    check = np.array([[[0.,         3.9999995,  0.19999999]],
+    check = np.array([[[0., 3.9999995, 0.19999999]],
                       [[0.19999999, 0.19999999, 0.19999999]]])
     np.testing.assert_allclose(cube.var_rnoise, check, tol)
 
-    check = np.array([[[0.,         2.0099752, 0.4582576]],
+    check = np.array([[[0., 2.0099752, 0.4582576]],
                       [[0.45276922, 0.4582576, 0.4582576]]])
     np.testing.assert_allclose(cube.err, check, tol)
 
@@ -497,14 +494,14 @@ def test_one_group_suppressed_two_integration(setup_inputs):
                       [[0, 0, 0]]])
     np.testing.assert_allclose(cube.dq, check, tol)
 
-    check = np.array([[[0.,    0.,    0.01]],
+    check = np.array([[[0., 0., 0.01]],
                       [[0.005, 0.01, 0.01]]])
     np.testing.assert_allclose(cube.var_poisson, check, tol)
 
-    check = np.array([[[0.,         0.,         0.19999999]],
+    check = np.array([[[0., 0., 0.19999999]],
                       [[0.19999999, 0.19999999, 0.19999999]]])
     np.testing.assert_allclose(cube.var_rnoise, check, tol)
 
-    check = np.array([[[0.,         0.,         0.4582576]],
+    check = np.array([[[0., 0., 0.4582576]],
                       [[0.45276922, 0.4582576, 0.4582576]]])
     np.testing.assert_allclose(cube.err, check, tol)

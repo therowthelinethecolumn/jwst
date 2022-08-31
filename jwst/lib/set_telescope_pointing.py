@@ -53,27 +53,26 @@ of transformations, the DCM for the reference point of the target aperture
 is calculated.
 
 """
+import dataclasses
+import logging
 import sys
-
-import asdf
+import typing
 from collections import defaultdict, namedtuple
 from copy import copy
-import dataclasses
 from enum import Enum
-import logging
 from math import (cos, sin, sqrt)
-import typing
 
-from astropy.time import Time
+import asdf
 import numpy as np
+from astropy.time import Time
 from scipy.interpolate import interp1d
 
 from .exposure_types import IMAGING_TYPES, FGS_GUIDE_EXP_TYPES
 from .set_velocity_aberration import compute_va_effects_vector
 from .siafdb import SIAF, SiafDb
-from ..assign_wcs.util import update_s_region_keyword, calc_rotation_matrix
-from ..assign_wcs.pointing import v23tosky
 from .. import datamodels
+from ..assign_wcs.pointing import v23tosky
+from ..assign_wcs.util import update_s_region_keyword, calc_rotation_matrix
 from ..lib.engdb_tools import ENGDB_Service
 from ..lib.pipe_utils import is_tso
 
@@ -1194,7 +1193,8 @@ def calc_gs2gsapp(m_eci2gsics, jwst_velocity):
     # Check velocity. If present, negate the velocity since
     # the desire is to remove the correction.
     if jwst_velocity is None or any(jwst_velocity == None):  # noqa Syntax needed for numpy arrays.
-        logger.warning('Velocity: %s contains None. Cannot calculate aberration. Returning identity matrix', jwst_velocity)
+        logger.warning('Velocity: %s contains None. Cannot calculate aberration. Returning identity matrix',
+                       jwst_velocity)
         return np.identity(3)
     velocity = -1 * jwst_velocity
 
@@ -1222,9 +1222,7 @@ def calc_gs2gsapp(m_eci2gsics, jwst_velocity):
                         [-a_hat[1], a_hat[0], 0.]])
     theta = np.arcsin(u_prod_mag)
 
-    m_gs2gsapp = np.identity(3) \
-        - (m_a_hat * np.sin(theta)) \
-        + (2 * m_a_hat**2 * np.sin(theta / 2.)**2)
+    m_gs2gsapp = np.identity(3) - (m_a_hat * np.sin(theta)) + (2 * m_a_hat ** 2 * np.sin(theta / 2.) ** 2)
 
     logger.debug('m_gs2gsapp: %s', m_gs2gsapp)
     return m_gs2gsapp
@@ -1642,7 +1640,7 @@ def vector_to_angle(v):
     delta = np.arcsin(v[2])
     if alpha < 0.:
         alpha += 2. * np.pi
-    return(alpha, delta)
+    return (alpha, delta)
 
 
 def angle_to_vector(alpha, delta):
@@ -1842,7 +1840,6 @@ def all_pointings(mnemonics):
     pointings = []
     filled = fill_mnemonics_chronologically(mnemonics)
     for obstime, mnemonics_at_time in filled.items():
-
         # Fill out the matrices
         q = np.array([
             mnemonics_at_time['SA_ZATTEST1'].value,
@@ -2399,7 +2396,7 @@ def cart_to_vector(coord):
     vector = np.array([
         coord[0],
         coord[1],
-        sqrt(1 - coord[0]**2 - coord[1]**2)
+        sqrt(1 - coord[0] ** 2 - coord[1] ** 2)
     ])
 
     return vector

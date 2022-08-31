@@ -4,12 +4,12 @@ Unit tests for fringe correction
 
 """
 
-import pytest
 import numpy as np
 import numpy.random as rn
+import pytest
 
-from jwst.datamodels import IFUImageModel
 from jwst.datamodels import FringeModel
+from jwst.datamodels import IFUImageModel
 from jwst.fringe import fringe
 
 FRINGE_CONSTANT = 2.  # correction will be input data divided by this factor
@@ -39,15 +39,15 @@ def test_data_correction(setup_inputs):
 
     # Check that correction was not done on pixel with NaN values for both SCI
     #     and ERR arrays (i.e. these pixels have not been corrected)
-    assert(np.isnan(output_model.data[0, 0]))
-    assert(np.isnan(output_model.err[0, 0]))
+    assert (np.isnan(output_model.data[0, 0]))
+    assert (np.isnan(output_model.err[0, 0]))
 
 
 @pytest.fixture
 def setup_inputs():
     ''' Create input and fringe models.'''
-    def _setup(shape=(2, 2)):
 
+    def _setup(shape=(2, 2)):
         input_data = (np.ones(shape[0] * shape[1])).reshape(shape) * 6.
         input_err = rn.random_sample(shape)
         input_model = IFUImageModel(data=input_data, err=input_err)

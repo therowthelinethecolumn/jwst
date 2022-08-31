@@ -1,17 +1,18 @@
 """ This is the main ifu spectral cube building routine.
 """
-from ..stpipe import Step
-from .. import datamodels
-from . import cube_build
-from . import ifu_cube
-from . import data_types
-from ..assign_wcs.util import update_s_region_keyword
 import time
+
+from . import cube_build
+from . import data_types
+from . import ifu_cube
+from .. import datamodels
+from ..assign_wcs.util import update_s_region_keyword
+from ..stpipe import Step
 
 __all__ = ["CubeBuildStep"]
 
 
-class CubeBuildStep (Step):
+class CubeBuildStep(Step):
     """CubeBuildStep: Creates a 3-D spectral cube
 
     Notes
@@ -59,7 +60,7 @@ class CubeBuildStep (Step):
 
     reference_file_types = ['cubepar']
 
-# ________________________________________________________________________________
+    # ________________________________________________________________________________
     def process(self, input):
         """This is the main routine for IFU spectral cube building.
 
@@ -70,31 +71,31 @@ class CubeBuildStep (Step):
         """
 
         self.log.info('Starting IFU Cube Building Step')
-# ________________________________________________________________________________
-# For all parameters convert to a standard format
-# Report read in values to screen
-# ________________________________________________________________________________
+        # ________________________________________________________________________________
+        # For all parameters convert to a standard format
+        # Report read in values to screen
+        # ________________________________________________________________________________
         self.subchannel = self.band
         self.suffix = 's3d'  # override suffix = cube_build
 
-        if(not self.subchannel.islower()):
+        if (not self.subchannel.islower()):
             self.subchannel = self.subchannel.lower()
-        if(not self.filter.islower()):
+        if (not self.filter.islower()):
             self.filter = self.filter.lower()
-        if(not self.grating.islower()):
+        if (not self.grating.islower()):
             self.grating = self.grating.lower()
-        if(not self.coord_system.islower()):
+        if (not self.coord_system.islower()):
             self.coord_system = self.coord_system.lower()
-        if(not self.output_type.islower()):
+        if (not self.output_type.islower()):
             self.output_type = self.output_type.lower()
-        if(not self.weighting.islower()):
+        if (not self.weighting.islower()):
             self.weighting = self.weighting.lower()
 
-        if(self.scale1 != 0.0):
+        if (self.scale1 != 0.0):
             self.log.info(f'Input Scale of axis 1 {self.scale1}')
-        if(self.scale2 != 0.0):
+        if (self.scale2 != 0.0):
             self.log.info(f'Input Scale of axis 2 {self.scale2}')
-        if(self.scalew != 0.0):
+        if (self.scalew != 0.0):
             self.log.info(f'Input wavelength scale {self.scalew}')
 
         if self.wavemin is not None:
@@ -141,13 +142,13 @@ class CubeBuildStep (Step):
             if self.weight_power != 0:
                 self.log.info(f'Power weighting distance: {self.weight_power}')
 
-# ________________________________________________________________________________
-# read input parameters - Channel, Band (Subchannel), Grating, Filter
-# ________________________________________________________________________________
+        # ________________________________________________________________________________
+        # read input parameters - Channel, Band (Subchannel), Grating, Filter
+        # ________________________________________________________________________________
         self.pars_input = {}
-# the following parameters are set either by the an input parameter
-# or
-# if not set on the command line then from reading in the data.
+        # the following parameters are set either by the an input parameter
+        # or
+        # if not set on the command line then from reading in the data.
         self.pars_input['channel'] = []
         self.pars_input['subchannel'] = []
 
@@ -176,24 +177,24 @@ class CubeBuildStep (Step):
             if self.weighting == 'emsm':
                 self.interpolation = 'pointcloud'
 
-# read_user_input:
-# see if options channel, band,grating filter are set on the command lines
-# if they are then self.pars_input['output_type'] = 'user' and fill in  par_input with values
+        # read_user_input:
+        # see if options channel, band,grating filter are set on the command lines
+        # if they are then self.pars_input['output_type'] = 'user' and fill in  par_input with values
         self.read_user_input()
-# ________________________________________________________________________________
-# DataTypes: Read in the input data - 4 formats are allowed:
-# 1. filename
-# 2. single model
-# 3. ASN table
-# 4. model container
-# figure out what type of data we have. Fill in the input_table.input_models.
-# input_table.input_models is used in the rest of IFU Cube Building
-# We need to do this in cube_build_step because we need to pass the data_model
-# to CRDS to figure out what type of reference files to grab (MIRI or NIRSPEC)
-# if the user has provided the filename - strip out .fits and pull out the
-# base name. The cube_build software will attached the needed information:
-#  channel, sub-channel  grating or filter to filename
-# ________________________________________________________________________________
+        # ________________________________________________________________________________
+        # DataTypes: Read in the input data - 4 formats are allowed:
+        # 1. filename
+        # 2. single model
+        # 3. ASN table
+        # 4. model container
+        # figure out what type of data we have. Fill in the input_table.input_models.
+        # input_table.input_models is used in the rest of IFU Cube Building
+        # We need to do this in cube_build_step because we need to pass the data_model
+        # to CRDS to figure out what type of reference files to grab (MIRI or NIRSPEC)
+        # if the user has provided the filename - strip out .fits and pull out the
+        # base name. The cube_build software will attached the needed information:
+        #  channel, sub-channel  grating or filter to filename
+        # ________________________________________________________________________________
         input_table = data_types.DataTypes(input, self.single,
                                            self.output_file,
                                            self.output_dir)
@@ -206,16 +207,16 @@ class CubeBuildStep (Step):
         if self.output_type == 'multi' and len(self.input_filenames) == 1:
             self.pipeline = 2
 
-# ________________________________________________________________________________
-# Read in Cube Parameter Reference file
-# identify what reference file has been associated with these input
+        # ________________________________________________________________________________
+        # Read in Cube Parameter Reference file
+        # identify what reference file has been associated with these input
         par_filename = self.get_reference_file(self.input_models[0], 'cubepar')
-# Check for a valid reference file
+        # Check for a valid reference file
         if par_filename == 'N/A':
             self.log.warning('No default cube parameters reference file found')
             return
-# ________________________________________________________________________________
-# shove the input parameters in to pars to pull out in general cube_build.py
+        # ________________________________________________________________________________
+        # shove the input parameters in to pars to pull out in general cube_build.py
 
         pars = {
             'channel': self.pars_input['channel'],
@@ -226,8 +227,8 @@ class CubeBuildStep (Step):
             'single': self.single,
             'output_type': self.pars_input['output_type']}
 
-# shove the input parameters in to pars_cube to pull out ifu_cube.py
-# these parameters are related to the building a single ifucube_model
+        # shove the input parameters in to pars_cube to pull out ifu_cube.py
+        # these parameters are related to the building a single ifucube_model
 
         pars_cube = {
             'scale1': self.scale1,
@@ -243,31 +244,31 @@ class CubeBuildStep (Step):
             'wavemax': self.wavemax,
             'skip_dqflagging': self.skip_dqflagging}
 
-# ________________________________________________________________________________
-# create an instance of class CubeData
+        # ________________________________________________________________________________
+        # create an instance of class CubeData
 
         cubeinfo = cube_build.CubeData(
             self.input_models,
             self.input_filenames,
             par_filename,
             **pars)
-# ________________________________________________________________________________
-# cubeinfo.setup:
-# read in all the input files, information from cube_pars, read in input data
-# and fill in master_table holding what files are associated with each
-# ch/sub-ch or grating/filter.
-# Fill in all_channel, all_subchannel,all_filter, all_grating and instrument
+        # ________________________________________________________________________________
+        # cubeinfo.setup:
+        # read in all the input files, information from cube_pars, read in input data
+        # and fill in master_table holding what files are associated with each
+        # ch/sub-ch or grating/filter.
+        # Fill in all_channel, all_subchannel,all_filter, all_grating and instrument
 
         result = cubeinfo.setup()
         instrument = result['instrument']
         instrument_info = result['instrument_info']
         master_table = result['master_table']
-# ________________________________________________________________________________
-# How many and what type of cubes will be made.
-# send self.pars_input['output_type'], all_channel, all_subchannel, all_grating, all_filter
-# return number of cubes and for each cube the fill in
-# list_pars1 (valid channel or grating) and
-# list_pars2 (value subchannel or filter)
+        # ________________________________________________________________________________
+        # How many and what type of cubes will be made.
+        # send self.pars_input['output_type'], all_channel, all_subchannel, all_grating, all_filter
+        # return number of cubes and for each cube the fill in
+        # list_pars1 (valid channel or grating) and
+        # list_pars2 (value subchannel or filter)
 
         num_cubes, cube_pars = cubeinfo.number_cubes()
         if not self.single:
@@ -295,29 +296,29 @@ class CubeBuildStep (Step):
                 master_table,
                 **pars_cube)
 
-# ________________________________________________________________________________
+            # ________________________________________________________________________________
             thiscube.check_ifucube()  # basic checks
 
-# Based on channel/subchannel or grating/prism find:
-# spatial spaxel size, min wave, max wave
-# Set linear_wavelength to true or false depending on which type of IFUcube is
-# being created.
-# If linear wavelength (single band) single values are assigned to:
-# rois, roiw,  weight_power, softrad
-# If not linear wavelength (multi bands) an arrays are created  for:
-# rois, roiw, weight_power, softrad
+            # Based on channel/subchannel or grating/prism find:
+            # spatial spaxel size, min wave, max wave
+            # Set linear_wavelength to true or false depending on which type of IFUcube is
+            # being created.
+            # If linear wavelength (single band) single values are assigned to:
+            # rois, roiw,  weight_power, softrad
+            # If not linear wavelength (multi bands) an arrays are created  for:
+            # rois, roiw, weight_power, softrad
 
             if self.coord_system == 'internal_cal':
                 thiscube.determine_cube_parameters_internal()
             else:
                 thiscube.determine_cube_parameters()
             thiscube.setup_ifucube_wcs()
-# _______________________________________________________________________________
-# build the IFU Cube
+            # _______________________________________________________________________________
+            # build the IFU Cube
 
-# If single = True: map each file to output grid and return single mapped file
-# to output grid
-# This option is used for background matching and outlier rejection
+            # If single = True: map each file to output grid and return single mapped file
+            # to output grid
+            # This option is used for background matching and outlier rejection
             status = 0
             if self.single:
                 self.output_file = None
@@ -325,7 +326,7 @@ class CubeBuildStep (Step):
                 self.log.info("Number of Single IFUCube models returned %i ",
                               len(cube_container))
 
-# Else standard IFU cube building
+            # Else standard IFU cube building
             else:
                 cube_result = thiscube.build_ifucube()
                 result, status = cube_result
@@ -337,7 +338,7 @@ class CubeBuildStep (Step):
                 status_cube = 1
 
         t1 = time.time()
-        self.log.debug(f'Time to build all cubes {t1-t0}')
+        self.log.debug(f'Time to build all cubes {t1 - t0}')
 
         # irrelevant WCS keywords we will remove from final product
         rm_keys = ['v2_ref', 'v3_ref', 'ra_ref', 'dec_ref', 'roll_ref',
@@ -355,7 +356,8 @@ class CubeBuildStep (Step):
             self.skip = True
 
         return cube_container
-# ******************************************************************************
+
+    # ******************************************************************************
 
     def read_user_input(self):
         """Read user input options for channel, subchannel, filter, or grating"""
@@ -376,10 +378,10 @@ class CubeBuildStep (Step):
                      'g170lp', 'f290lp', 'clear', 'opaque', 'all']
         valid_gwa = ['g140m', 'g140h', 'g235m', 'g235h',
                      'g395m', 'g395h', 'prism', 'all']
-# ________________________________________________________________________________
-# For MIRI we can set the channel.
-# If channel is  set to 'all' then let the determine_band_coverage figure out
-# which channels are covered by the data.
+        # ________________________________________________________________________________
+        # For MIRI we can set the channel.
+        # If channel is  set to 'all' then let the determine_band_coverage figure out
+        # which channels are covered by the data.
 
         if self.channel == 'all':
             self.pars_input['channel'].append('all')
@@ -390,7 +392,7 @@ class CubeBuildStep (Step):
             user_clen = len(channellist)
             for j in range(user_clen):
                 ch = channellist[j]
-                if(user_clen > 1):
+                if (user_clen > 1):
                     ch = ch.strip('[')
                     ch = ch.strip(']')
                     ch = ch.strip(' ')
@@ -399,12 +401,12 @@ class CubeBuildStep (Step):
 
                 if ch in valid_channel:
                     self.pars_input['channel'].append(ch)
-# remove duplicates if needed
+            # remove duplicates if needed
             self.pars_input['channel'] = list(set(self.pars_input['channel']))
-# ________________________________________________________________________________
-# For MIRI we can set the subchannel
-# if set to all then let the determine_band_coverage figure out what subchannels
-# are covered by the data
+        # ________________________________________________________________________________
+        # For MIRI we can set the subchannel
+        # if set to all then let the determine_band_coverage figure out what subchannels
+        # are covered by the data
 
         if self.subchannel == 'all':
             self.pars_input['subchannel'].append('all')
@@ -423,16 +425,16 @@ class CubeBuildStep (Step):
                 b = str(b)
                 if b in valid_subchannel:
                     self.pars_input['subchannel'].append(b)
-# remove duplicates if needed
+            # remove duplicates if needed
             self.pars_input['subchannel'] = list(set(self.pars_input['subchannel']))
-# ________________________________________________________________________________
-# For NIRSPEC we can set the filter
-# If set to all then let the determine_band_coverage figure out what filters are
-# covered by the data.
+        # ________________________________________________________________________________
+        # For NIRSPEC we can set the filter
+        # If set to all then let the determine_band_coverage figure out what filters are
+        # covered by the data.
 
         if self.filter == 'all':
             self.pars_input['filter'].append('all')
-        else:   # User has set value
+        else:  # User has set value
             if not self.single:
                 self.pars_input['output_type'] = 'user'
             filterlist = self.filter.split(',')
@@ -447,15 +449,15 @@ class CubeBuildStep (Step):
                 f = str(f)
                 if f in valid_fwa:
                     self.pars_input['filter'].append(f)
-# remove duplicates if needed
+            # remove duplicates if needed
             self.pars_input['filter'] = list(set(self.pars_input['filter']))
-# ________________________________________________________________________________
-# For NIRSPEC we can set the grating
-# If set to all then let the determine_band_coverage figure out what gratings are
-# covered by the data
+        # ________________________________________________________________________________
+        # For NIRSPEC we can set the grating
+        # If set to all then let the determine_band_coverage figure out what gratings are
+        # covered by the data
         if self.grating == 'all':
             self.pars_input['grating'].append('all')
-        else:    # user has set value
+        else:  # user has set value
             if not self.single:
                 self.pars_input['output_type'] = 'user'
             gratinglist = self.grating.split(',')
@@ -471,6 +473,6 @@ class CubeBuildStep (Step):
                 g = str(g)
                 if g in valid_gwa:
                     self.pars_input['grating'].append(g)
-# remove duplicates if needed
+            # remove duplicates if needed
             self.pars_input['grating'] = list(set(self.pars_input['grating']))
 # ________________________________________________________________________________

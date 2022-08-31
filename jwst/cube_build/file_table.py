@@ -1,7 +1,9 @@
 """ Dictionary holding defaults for cube_build
 """
-from .. import datamodels
 import logging
+
+from .. import datamodels
+
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
@@ -90,7 +92,7 @@ class FileTable():
         self.FileMap['NIRSPEC']['g395h']['f290lp'] = []
         self.FileMap['NIRSPEC']['g395h']['opaque'] = []
 
-# ********************************************************************************
+    # ********************************************************************************
 
     def set_file_table(self,
                        input_models,
@@ -113,41 +115,41 @@ class FileTable():
         """
         num = 0
         num = len(input_filenames)
-# ________________________________________________________________________________
-# Loop over input list of files and assign fill in the MasterTable with filename
-# for the correct (channel-subchannel) or (grating-subchannel)
+        # ________________________________________________________________________________
+        # Loop over input list of files and assign fill in the MasterTable with filename
+        # for the correct (channel-subchannel) or (grating-subchannel)
         for i in range(num):
 
             ifile = input_filenames[i]
             input = input_models[i]
 
-        # Open the input data model & Fill in the FileMap information
+            # Open the input data model & Fill in the FileMap information
 
             with datamodels.IFUImageModel(input) as input_model:
 
                 instrument = input_model.meta.instrument.name.upper()
                 assign_wcs = input_model.meta.cal_step.assign_wcs
 
-                if(assign_wcs != 'COMPLETE'):
+                if (assign_wcs != 'COMPLETE'):
                     raise ErrorNoAssignWCS("Assign WCS has not been run on file %s",
                                            ifile)
-            # _____________________________________________________________________
-            # MIRI instrument
+                # _____________________________________________________________________
+                # MIRI instrument
                 if instrument == 'MIRI':
                     channel = input_model.meta.instrument.channel
                     subchannel = input_model.meta.instrument.band.lower()
                     clenf = len(channel)
                     for k in range(clenf):
                         self.FileMap['MIRI'][channel[k]][subchannel].append(input_model)
-            # _____________________________________________________________________
-            # NIRSPEC instrument
+                # _____________________________________________________________________
+                # NIRSPEC instrument
                 elif instrument == 'NIRSPEC':
                     fwa = input_model.meta.instrument.filter.lower()
                     gwa = input_model.meta.instrument.grating.lower()
                     self.FileMap['NIRSPEC'][gwa][fwa].append(input_model)
                 else:
                     pass
-#                    log.info('Instrument not valid for cube')
+        #                    log.info('Instrument not valid for cube')
         return instrument
 
 

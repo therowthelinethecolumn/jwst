@@ -11,15 +11,18 @@ of JWST with respect to the Earth.
 """
 try:
     from jwst import timeconversion
+
     USE_TIMECONVERSION = True
 except Exception:
     import numpy as np
     import astropy.coordinates as acoord
     import astropy.constants
+
     USE_TIMECONVERSION = False
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
 
 # This is an interface to call
 #    timeconversion.compute_bary_helio_time(targetcoord, times)
@@ -84,7 +87,7 @@ def utc_tdb(filename, update_tdb=True, update_velosys=True,
             update_keyword = False
 
         if update_keyword:
-            half_dt = delta_t / (86400. * 2.)       # and convert to days
+            half_dt = delta_t / (86400. * 2.)  # and convert to days
             tt_rv_times = np.array([to_tt(expmid - half_dt),
                                     to_tt(expmid + half_dt)])
             if USE_TIMECONVERSION:
@@ -103,7 +106,7 @@ def utc_tdb(filename, update_tdb=True, update_velosys=True,
             # the motion of the earth along the line of sight to or from the
             # target.
             delta_tdb = tdb_rv_times[1] - tdb_rv_times[0]
-            time_diff = (delta_tt - delta_tdb) * 86400.     # seconds
+            time_diff = (delta_tt - delta_tdb) * 86400.  # seconds
             radial_velocity = time_diff * astropy.constants.c.value / delta_t
             radial_velocity = round(radial_velocity, ndecimals)
             log.info("radial velocity = {}".format(radial_velocity))
@@ -262,7 +265,7 @@ def get_jwst_position2(times, jwstpos, use_jpl_ephemeris=False):
     centerearth_jwst = jwstpos
 
     return (barysun_centerearth_pos + centerearth_jwst), \
-        (centersun_centerearth_pos + centerearth_jwst)
+           (centersun_centerearth_pos + centerearth_jwst)
 
 
 def get_target_vector2(targetcoord):
@@ -276,7 +279,7 @@ def get_target_vector2(targetcoord):
     y = cartcoord.y.value
     z = cartcoord.z.value
     vector = np.array([x, y, z])
-    return vector / np.sqrt((vector**2).sum())
+    return vector / np.sqrt((vector ** 2).sum())
 
 
 def compute_bary_helio_time2(targetcoord, times, jwstpos,
@@ -305,7 +308,6 @@ def compute_bary_helio_time2(targetcoord, times, jwstpos,
 
 
 def get_jwst_keywords(fd):
-
     # TT MJD time at which JWST has position jwst_pos and velocity jwst_vel.
     eph_time = to_tt(fd['SCI'].header['eph_time'])
 
@@ -317,7 +319,7 @@ def get_jwst_keywords(fd):
                          fd['SCI'].header['jwst_dy'],
                          fd['SCI'].header['jwst_dz']), dtype=np.float64)
 
-    return(eph_time, jwst_pos, jwst_vel)
+    return (eph_time, jwst_pos, jwst_vel)
 
 
 def linear_pos(tt_times, eph_time, jwst_pos, jwst_vel):

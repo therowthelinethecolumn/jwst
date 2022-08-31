@@ -2,10 +2,11 @@
 Unit tests for imprint correction
 """
 
-from jwst.datamodels import ImageModel
-from jwst.imprint import ImprintStep
 import numpy as np
 import pytest
+
+from jwst.datamodels import ImageModel
+from jwst.imprint import ImprintStep
 
 
 def test_step(make_imagemodel):
@@ -14,13 +15,14 @@ def test_step(make_imagemodel):
     im = make_imagemodel(10, 10)
     result = ImprintStep.call(im, im)
 
-    assert(result.meta.cal_step.imprint == 'COMPLETE')
+    assert (result.meta.cal_step.imprint == 'COMPLETE')
     assert result.data.sum() == 0
 
 
 @pytest.fixture(scope='function')
 def make_imagemodel():
     '''Image model for testing'''
+
     def _im(ysize, xsize):
         # create the data arrays
         im = ImageModel((ysize, xsize))

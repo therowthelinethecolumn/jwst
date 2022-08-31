@@ -1,12 +1,12 @@
-from stdatamodels.validate import ValidationWarning
-import numpy as np
-import pytest
 import warnings
 
+import numpy as np
+import pytest
+from stdatamodels.validate import ValidationWarning
+
+from jwst.datamodels import MaskModel, GuiderRawModel, RampModel, dqflags
 from jwst.dq_init import DQInitStep
 from jwst.dq_init.dq_initialization import do_dqinit
-from jwst.datamodels import MaskModel, GuiderRawModel, RampModel, dqflags
-
 
 # Set parameters for multiple runs of data
 args = "xstart, ystart, xsize, ysize, nints, ngroups, instrument, exp_type"
@@ -29,14 +29,14 @@ def test_dq_im(xstart, ystart, xsize, ysize, nints, ngroups, instrument, exp_typ
     dq, dq_def = make_maskmodel(ysize, xsize)
 
     # edit reference file with known bad pixel values
-    dq[100, 100] = 2   # Dead pixel
-    dq[200, 100] = 4   # Hot pixel
-    dq[300, 100] = 8   # Unreliable_slope
+    dq[100, 100] = 2  # Dead pixel
+    dq[200, 100] = 4  # Hot pixel
+    dq[300, 100] = 8  # Unreliable_slope
     dq[400, 100] = 16  # RC
-    dq[500, 100] = 1   # Do_not_use
-    dq[100, 200] = 3   # Dead pixel + do not use
-    dq[200, 200] = 5   # Hot pixel + do not use
-    dq[300, 200] = 9   # Unreliable slope + do not use
+    dq[500, 100] = 1  # Do_not_use
+    dq[100, 200] = 3  # Dead pixel + do not use
+    dq[200, 200] = 5  # Hot pixel + do not use
+    dq[300, 200] = 9  # Unreliable slope + do not use
     dq[400, 200] = 17  # RC + do not use
 
     # write mask model
@@ -56,15 +56,15 @@ def test_dq_im(xstart, ystart, xsize, ysize, nints, ngroups, instrument, exp_typ
         dqdata = outfile.pixeldq
 
     # assert that the pixels read back in match the mapping from ref data to science data
-    assert(dqdata[100, 100] == dqflags.pixel['DEAD'])
-    assert(dqdata[200, 100] == dqflags.pixel['HOT'])
-    assert(dqdata[300, 100] == dqflags.pixel['UNRELIABLE_SLOPE'])
-    assert(dqdata[400, 100] == dqflags.pixel['RC'])
-    assert(dqdata[500, 100] == dqflags.pixel['DO_NOT_USE'])
-    assert(dqdata[100, 200] == 1025)
-    assert(dqdata[200, 200] == 2049)
-    assert(dqdata[300, 200] == 16777217)
-    assert(dqdata[400, 200] == 16385)
+    assert (dqdata[100, 100] == dqflags.pixel['DEAD'])
+    assert (dqdata[200, 100] == dqflags.pixel['HOT'])
+    assert (dqdata[300, 100] == dqflags.pixel['UNRELIABLE_SLOPE'])
+    assert (dqdata[400, 100] == dqflags.pixel['RC'])
+    assert (dqdata[500, 100] == dqflags.pixel['DO_NOT_USE'])
+    assert (dqdata[100, 200] == 1025)
+    assert (dqdata[200, 200] == 2049)
+    assert (dqdata[300, 200] == 16777217)
+    assert (dqdata[400, 200] == 16385)
 
 
 def test_groupdq():
@@ -141,8 +141,8 @@ def test_err():
     # check that ERR array was created and initialized to zero
     errarr = outfile.err
 
-    assert(errarr.ndim == 4)  # check that output err array is 4-D
-    assert(np.all(errarr == 0))  # check that values are 0
+    assert (errarr.ndim == 4)  # check that output err array is 4-D
+    assert (np.all(errarr == 0))  # check that values are 0
 
 
 def test_dq_subarray():
@@ -208,9 +208,9 @@ def test_dq_subarray():
     outpixdq = outfile.pixeldq
 
     # check for dq flag in pixeldq of subarray image
-    assert(outpixdq[76, 100] == 1024)
-    assert(outpixdq[84, 100] == 1)
-    assert(outpixdq[114, 80] == 2048)  # check that pixel was flagged 'NO_SAT_CHECK'
+    assert (outpixdq[76, 100] == 1024)
+    assert (outpixdq[84, 100] == 1)
+    assert (outpixdq[114, 80] == 2048)  # check that pixel was flagged 'NO_SAT_CHECK'
 
 
 def test_dq_add1_groupdq():
@@ -234,7 +234,7 @@ def test_dq_add1_groupdq():
 
     # write reference file with known bad pixel values
 
-    dq[505, 505] = 1   # Do_not_use
+    dq[505, 505] = 1  # Do_not_use
     dq[400, 500] = 3  # do_not_use and dead pixel
 
     # write mask model
@@ -252,8 +252,8 @@ def test_dq_add1_groupdq():
     outfile = do_dqinit(dm_ramp, ref_data)
 
     # test if pixels in pixeldq were incremented in value by 1
-    assert(outfile.pixeldq[505, 505] == 5)  # check that previous dq flag is added to mask value
-    assert(outfile.pixeldq[400, 500] == 1025)  # check two flags propagate correctly
+    assert (outfile.pixeldq[505, 505] == 5)  # check that previous dq flag is added to mask value
+    assert (outfile.pixeldq[400, 500] == 1025)  # check two flags propagate correctly
 
 
 # Set parameters for multiple runs of guider data
