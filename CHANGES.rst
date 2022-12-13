@@ -148,6 +148,11 @@ tweakreg
 - Fix a bug in the logic that handles inputs with a single image group when
   an absolute reference catalog is provided. [#7328]
 
+undersampling_correction
+------------------------
+
+- New step between jump and ramp_fitting in the ``Detector1 Pipeline``. [#7396]
+
 wfss_contam
 -----------
 
